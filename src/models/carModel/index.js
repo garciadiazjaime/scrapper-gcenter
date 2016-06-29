@@ -8,11 +8,11 @@ export default class CarModel {
       carNormal: carsData.standard_lanes.pop(),
       carSentri: carsData.NEXUS_SENTRI_lanes.pop(),
       carReady: carsData.ready_lanes.pop(),
-    } : null;
+    } : {};
   }
 
   static formatData(normal, sentri, ready) {
-    return normal.delay_minutes && normal.lanes_open && sentri.delay_minutes && sentri.lanes_open && ready.delay_minutes && ready.lanes_open ? {
+    return normal && normal.delay_minutes && normal.lanes_open && sentri && sentri.delay_minutes && sentri.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
       normal: {
         time: normal.delay_minutes.pop(),
         lanes: normal.lanes_open.pop(),
