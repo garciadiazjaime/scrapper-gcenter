@@ -10,7 +10,7 @@ import XmlUtil from '../../../src/utils/xmlUtil';
 
 describe('XmlUtil', () => {
 
-  describe.only('parseToJson() resolved', () => {
+  describe('parseToJson() resolved', () => {
     const validResponse = 'valid_response';
     const validArgument = 'valid_argument';
 
@@ -28,7 +28,7 @@ describe('XmlUtil', () => {
     });
   });
 
-  describe.only('parseToJson() rejected', () => {
+  describe('parseToJson() rejected', () => {
     const invalidResponse = 'invalid_response';
     const validArgument = 'valid_argument';
 
