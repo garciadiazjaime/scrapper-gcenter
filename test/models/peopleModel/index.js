@@ -7,9 +7,7 @@ import stubData from '../../../resources/stubs/port.json';
 
 
 describe('PeopleModel', () => {
-
   describe('extractData()', () => {
-
     const invalidStubData = 'invalid_stub_data';
 
     it('returns valid results', () => {
@@ -22,9 +20,9 @@ describe('PeopleModel', () => {
     it('returns invalid results', () => {
       const { peopleNormal, peopleReady } = PeopleModel.extractData(invalidStubData);
       const results = PeopleModel.formatData(peopleNormal, peopleReady);
-      expect(peopleNormal).to.be.undefined;
-      expect(peopleReady).to.be.undefined;
-      expect(results).to.be.null;
+      expect(peopleNormal).to.be.an('undefined');
+      expect(peopleReady).to.be.an('undefined');
+      expect(results).to.be.a('null');
     });
   });
 });

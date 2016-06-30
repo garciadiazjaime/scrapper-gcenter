@@ -9,7 +9,6 @@ import RequestUtil from '../../../src/utils/requestUtil';
 
 
 describe('RequestUtil', () => {
-
   describe('request() resolved', () => {
     const validResponse = 'valid_response';
     const validUrl = 'valid_url';
@@ -20,7 +19,7 @@ describe('RequestUtil', () => {
 
     afterEach(() => {
       RequestUtil.request.restore();
-    })
+    });
 
     it('gets a valid response', () => {
       const results = RequestUtil.request(validUrl);
@@ -38,7 +37,7 @@ describe('RequestUtil', () => {
 
     afterEach(() => {
       RequestUtil.request.restore();
-    })
+    });
 
     it('gets an invalid response', () => {
       const results = RequestUtil.request(validUrl);

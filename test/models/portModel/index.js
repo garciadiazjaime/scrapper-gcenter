@@ -7,9 +7,7 @@ import stubData from '../../../resources/stubs/cbp.json';
 
 
 describe('PeopleModel', () => {
-
   describe('extractData()', () => {
-
     const validPort = '250401';
     const invalidPort = 'invalid_port';
     const invalidStubData = 'invalid_stub_data';
@@ -23,22 +21,22 @@ describe('PeopleModel', () => {
 
     it('returns empty results when sending invalid data', () => {
       const results = PortModel.extractData(invalidStubData, validPort);
-      expect(results.length).to.eq(0)
+      expect(results.length).to.eq(0);
     });
 
     it('returns empty results when sending invalid port', () => {
       const results = PortModel.extractData(invalidStubData, invalidPort);
-      expect(results.length).to.eq(0)
+      expect(results.length).to.eq(0);
     });
 
     it('returns empty results when sending invalid data and port', () => {
       const results = PortModel.extractData(invalidStubData, invalidPort);
-      expect(results.length).to.eq(0)
+      expect(results.length).to.eq(0);
     });
 
     it('returns empty results when sending nothing', () => {
       const results = PortModel.extractData();
-      expect(results.length).to.eq(0)
+      expect(results.length).to.eq(0);
     });
   });
 });

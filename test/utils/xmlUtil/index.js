@@ -9,7 +9,6 @@ import XmlUtil from '../../../src/utils/xmlUtil';
 
 
 describe('XmlUtil', () => {
-
   describe('parseToJson() resolved', () => {
     const validResponse = 'valid_response';
     const validArgument = 'valid_argument';
@@ -20,7 +19,7 @@ describe('XmlUtil', () => {
 
     afterEach(() => {
       XmlUtil.parseToJson.restore();
-    })
+    });
 
     it('gets a valid response', () => {
       const results = XmlUtil.parseToJson(validArgument);
@@ -38,7 +37,7 @@ describe('XmlUtil', () => {
 
     afterEach(() => {
       XmlUtil.parseToJson.restore();
-    })
+    });
 
     it('gets an invalid response', () => {
       const results = XmlUtil.parseToJson(validArgument);
