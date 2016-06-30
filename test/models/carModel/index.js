@@ -7,9 +7,7 @@ import stubData from '../../../resources/stubs/port.json';
 
 
 describe('CarModel', () => {
-
   describe('extractData()', () => {
-
     const invalidStubData = 'invalid_stub_data';
 
     it('returns valid results', () => {
@@ -23,10 +21,10 @@ describe('CarModel', () => {
     it('returns invalid results', () => {
       const { carNormal, carSentri, carReady } = CarModel.extractData(invalidStubData);
       const results = CarModel.formatData(carNormal, carSentri, carReady);
-      expect(carNormal).to.be.undefined;
-      expect(carSentri).to.be.undefined;
-      expect(carReady).to.be.undefined;
-      expect(results).to.be.null;
+      expect(carNormal).to.be.an('undefined');
+      expect(carSentri).to.be.an('undefined');
+      expect(carReady).to.be.an('undefined');
+      expect(results).to.be.a('null');
     });
   });
 });
