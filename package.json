@@ -13,8 +13,7 @@
     "webpack-cron": "webpack --progress --colors --watch --config webpack.config.cron.js",
     "dev": "nodemon build/server.js",
     "cron": "node build/main.js",
-    "lint": "./node_modules/.bin/eslint .",
-    "postinstall": "webpack --configwebpack.config.cron.js"
+    "lint": "./node_modules/.bin/eslint ."
   },
   "keywords": [],
   "author": "",
