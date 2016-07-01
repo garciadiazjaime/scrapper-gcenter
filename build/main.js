@@ -533,8 +533,7 @@ module.exports =
 	    key: 'openConnection',
 	    value: function openConnection() {
 	      return new Promise(function (resolve, reject) {
-	        var dbHost = _config2.default.get('db.url');
-	        _mongodb.MongoClient.connect(dbHost + 'gcenter', function (error, db) {
+	        _mongodb.MongoClient.connect(_config2.default.get('db.url'), function (error, db) {
 	          if (error) {
 	            reject(error);
 	          } else {
@@ -630,8 +629,8 @@ module.exports =
 	    url: {
 	      doc: 'Database hostname',
 	      format: String,
-	      default: 'mongodb://localhost:27017/',
-	      env: 'OPENSHIFT_MONGODB_DB_URL'
+	      default: 'mongodb://localhost:27017/gcenter',
+	      env: 'DB_URL'
 	    }
 	  },
 	  winston: {
