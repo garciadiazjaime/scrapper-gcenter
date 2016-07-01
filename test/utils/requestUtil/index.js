@@ -9,39 +9,38 @@ import RequestUtil from '../../../src/utils/requestUtil';
 
 
 describe('RequestUtil', () => {
-
-  describe('request() resolved', () => {
+  describe('get() resolved', () => {
     const validResponse = 'valid_response';
     const validUrl = 'valid_url';
 
     beforeEach(() => {
-      sinon.stub(RequestUtil, 'request').returns(Promise.resolve(validResponse));
+      sinon.stub(RequestUtil, 'get').returns(Promise.resolve(validResponse));
     });
 
     afterEach(() => {
-      RequestUtil.request.restore();
-    })
+      RequestUtil.get.restore();
+    });
 
     it('gets a valid response', () => {
-      const results = RequestUtil.request(validUrl);
+      const results = RequestUtil.get(validUrl);
       return expect(results).to.eventually.equal(validResponse);
     });
   });
 
-  describe('request() rejected', () => {
+  describe('get() rejected', () => {
     const invalidResponse = 'invalid_response';
     const validUrl = 'valid_url';
 
     beforeEach(() => {
-      sinon.stub(RequestUtil, 'request').returns(Promise.reject(invalidResponse));
+      sinon.stub(RequestUtil, 'get').returns(Promise.reject(invalidResponse));
     });
 
     afterEach(() => {
-      RequestUtil.request.restore();
-    })
+      RequestUtil.get.restore();
+    });
 
     it('gets an invalid response', () => {
-      const results = RequestUtil.request(validUrl);
+      const results = RequestUtil.get(validUrl);
       return expect(results).to.eventually.be.rejectedWith(invalidResponse);
     });
   });

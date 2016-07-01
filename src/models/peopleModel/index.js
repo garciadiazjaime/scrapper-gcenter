@@ -7,11 +7,11 @@ export default class PeopleModel {
     return peopleData && peopleData.standard_lanes && peopleData.ready_lanes ? {
       peopleNormal: peopleData.standard_lanes.pop(),
       peopleReady: peopleData.ready_lanes.pop(),
-    } : null;
+    } : {};
   }
 
   static formatData(normal, ready) {
-    return normal.delay_minutes && normal.lanes_open && ready.delay_minutes && ready.lanes_open ? {
+    return normal && normal.delay_minutes && normal.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
       normal: {
         time: normal.delay_minutes.pop(),
         lanes: normal.lanes_open.pop(),
