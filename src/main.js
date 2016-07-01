@@ -4,6 +4,7 @@ import XmlUtil from './utils/xmlUtil';
 import PortModel from './models/portModel';
 import MongoUtil from './utils/mongoUtil';
 import QueryUtil from './utils/mongoUtil/queryUtil';
+import config from './config';
 const ports = require('./constants/ports.json');
 
 import 'babel-polyfill';
@@ -12,8 +13,7 @@ function startRequest(port) {
   return new Promise((resolve, reject) => {
     (asyncUtil(function *() {
       console.log(`getting data for ${port.name}...`);
-      const url = 'http://127.0.0.1:3000/ports';
-      const requestResponse = yield RequestUtil.get(url);
+      const requestResponse = yield RequestUtil.get(config.get('api.url'));
 
       const jsonData = yield XmlUtil.parseToJson(requestResponse);
 
