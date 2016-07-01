@@ -37,6 +37,6 @@ export default class PortModel {
   }
 
   static isPortValid(data, port) {
-    return data.port_number && data.port_number.indexOf(port) !== -1;
+    return data.port_number && data.port_number.indexOf(port.toString()) !== -1;
   }
 }

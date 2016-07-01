@@ -33,6 +33,10 @@ module.exports = {
       query: {
         presets: ['es2015'],
       },
+    }, {
+      test: /\.json?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'json-loader',
     }],
   },
   externals: nodeModules,

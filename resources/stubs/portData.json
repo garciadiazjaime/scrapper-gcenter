@@ -1,0 +1,26 @@
+[{
+  "car": {
+    "normal": {
+      "time": "40",
+      "lanes": "3"
+    },
+    "sentry": {
+      "time": "5",
+      "lanes": "1"
+    },
+    "readyLine": {
+      "time": "15",
+      "lanes": "8"
+    }
+  },
+  "people": {
+    "normal": {
+      "time": "25",
+      "lanes": "3"
+    },
+    "readyLine": {
+      "time": "10",
+      "lanes": "3"
+    }
+  }
+}]

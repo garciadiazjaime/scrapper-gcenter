@@ -2,21 +2,50 @@ import asyncUtil from './utils/asyncUtil';
 import RequestUtil from './utils/requestUtil';
 import XmlUtil from './utils/xmlUtil';
 import PortModel from './models/portModel';
+import MongoUtil from './utils/mongoUtil';
+import QueryUtil from './utils/mongoUtil/queryUtil';
+const ports = require('./constants/ports.json');
+
 import 'babel-polyfill';
 
-function main() {
-  (asyncUtil(function *() {
-    const url = 'http://127.0.0.1:3000/ports';
-    const requestResponse = yield RequestUtil.request(url);
+function startRequest(port) {
+  return new Promise((resolve, reject) => {
+    (asyncUtil(function *() {
+      console.log(`getting data for ${port.name}...`);
+      const url = 'http://127.0.0.1:3000/ports';
+      const requestResponse = yield RequestUtil.get(url);
 
-    const jsonData = yield XmlUtil.parseToJson(requestResponse);
+      const jsonData = yield XmlUtil.parseToJson(requestResponse);
 
-    const portData1 = PortModel.extractData(jsonData, '250401');
+      const portData = PortModel.extractData(jsonData, port.id);
 
-    const portData2 = PortModel.extractData(jsonData, '250601');
+      const data = QueryUtil.saveReport(portData, port.name);
 
-    console.log('portData1', JSON.stringify(portData1));
-    console.log('portData2', JSON.stringify(portData2));
-  }))();
+      const results = yield MongoUtil.save(data);
+
+      if (results) {
+        console.log(`...Garita ${port.name} updated`);
+        resolve();
+      } else {
+        console.log(`...Error on garita ${port.name}`);
+        reject();
+      }
+    }))();
+  });
 }
-main();
+
+const promises = [];
+console.log('==== start ====');
+for (let i = 0, len = ports.length; i < len; i++) {
+  ((port) => {
+    promises.push(startRequest(port));
+  })(ports[i]);
+}
+
+Promise.all(promises)
+  .then(() => {
+    console.log('==== done ====');
+  })
+  .catch(error => {
+    console.log(error);
+  });
