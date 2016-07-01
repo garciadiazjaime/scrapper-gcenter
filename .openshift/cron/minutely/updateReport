@@ -1,3 +1,4 @@
-#!/bin/bash
+#! /bin/bash
+
 cd cd ~/app-root/repo/
 npm run cron
