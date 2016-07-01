@@ -32,7 +32,7 @@ const config = convict({
     url: {
       doc: 'Database hostname',
       format: String,
-      default: 'mongodb://localhost:27017/gcenter',
+      default: 'mongodb://localhost:27017/',
       env: 'OPENSHIFT_MONGODB_DB_URL',
     },
   },

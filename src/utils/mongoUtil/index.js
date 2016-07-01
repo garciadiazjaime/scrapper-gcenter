@@ -5,7 +5,8 @@ export default class MongoUtil {
 
   static openConnection() {
     return new Promise((resolve, reject) => {
-      MongoClient.connect(config.get('db.url'), (error, db) => {
+      const dbHost = config.get('db.url');
+      MongoClient.connect(`${dbHost}gcenter`, (error, db) => {
         if (error) {
           reject(error);
         } else {
