@@ -71,6 +71,10 @@ module.exports =
 
 	var _queryUtil2 = _interopRequireDefault(_queryUtil);
 
+	var _config = __webpack_require__(12);
+
+	var _config2 = _interopRequireDefault(_config);
+
 	__webpack_require__(15);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -80,29 +84,28 @@ module.exports =
 	function startRequest(port) {
 	  return new Promise(function (resolve, reject) {
 	    (0, _asyncUtil2.default)(regeneratorRuntime.mark(function _callee() {
-	      var url, requestResponse, jsonData, portData, data, results;
+	      var requestResponse, jsonData, portData, data, results;
 	      return regeneratorRuntime.wrap(function _callee$(_context) {
 	        while (1) {
 	          switch (_context.prev = _context.next) {
 	            case 0:
 	              console.log('getting data for ' + port.name + '...');
-	              url = 'http://127.0.0.1:3000/ports';
-	              _context.next = 4;
-	              return _requestUtil2.default.get(url);
+	              _context.next = 3;
+	              return _requestUtil2.default.get(_config2.default.get('api.url'));
 
-	            case 4:
+	            case 3:
 	              requestResponse = _context.sent;
-	              _context.next = 7;
+	              _context.next = 6;
 	              return _xmlUtil2.default.parseToJson(requestResponse);
 
-	            case 7:
+	            case 6:
 	              jsonData = _context.sent;
 	              portData = _portModel2.default.extractData(jsonData, port.id);
 	              data = _queryUtil2.default.saveReport(portData, port.name);
-	              _context.next = 12;
+	              _context.next = 11;
 	              return _mongoUtil2.default.save(data);
 
-	            case 12:
+	            case 11:
 	              results = _context.sent;
 
 
@@ -114,7 +117,7 @@ module.exports =
 	                reject();
 	              }
 
-	            case 14:
+	            case 13:
 	            case 'end':
 	              return _context.stop();
 	          }
@@ -614,12 +617,20 @@ module.exports =
 	    default: 3030,
 	    env: 'PORT'
 	  },
+	  api: {
+	    url: {
+	      doc: 'API URL',
+	      format: String,
+	      default: 'http://127.0.0.1:3000/ports',
+	      env: 'API_URL'
+	    }
+	  },
 	  db: {
 	    url: {
 	      doc: 'Database hostname',
 	      format: String,
 	      default: 'mongodb://localhost:27017/gcenter',
-	      env: 'DATABASE_URL'
+	      env: 'OPENSHIFT_MONGODB_DB_URL'
 	    }
 	  },
 	  winston: {

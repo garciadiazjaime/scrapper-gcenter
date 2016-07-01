@@ -20,12 +20,20 @@ const config = convict({
     default: 3030,
     env: 'PORT',
   },
+  api: {
+    url: {
+      doc: 'API URL',
+      format: String,
+      default: 'http://127.0.0.1:3000/ports',
+      env: 'API_URL',
+    },
+  },
   db: {
     url: {
       doc: 'Database hostname',
       format: String,
       default: 'mongodb://localhost:27017/gcenter',
-      env: 'DATABASE_URL',
+      env: 'OPENSHIFT_MONGODB_DB_URL',
     },
   },
   winston: {
