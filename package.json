@@ -2,8 +2,10 @@
   "name": "scrapper-gcenter",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
+  "main": "start.js",
   "scripts": {
+    "start": "node --use_strict start.js",
     "test": "mocha --compilers js:babel-core/register --recursive test",
     "webpack": "webpack --progress --colors --watch",
     "webpack-cron": "webpack --progress --colors --watch --config webpack.config.cron.js",
