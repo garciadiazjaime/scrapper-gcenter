@@ -1,3 +1,7 @@
 #! /bin/bash
-cd ${OPENSHIFT_REPO_DIR}
-npm run cron >> ${OPENSHIFT_LOG_DIR}/cron.log
+
+minute=$(date +%M)
+if [[ $minute =~ [05]$ ]]; then
+  cd ${OPENSHIFT_REPO_DIR}
+  npm run cron >> ${OPENSHIFT_LOG_DIR}/cron.log
+fi
