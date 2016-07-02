@@ -36,12 +36,30 @@ const config = convict({
       env: 'DB_URL',
     },
   },
-  winston: {
+  loggly: {
     token: {
       doc: 'Loggly token',
       format: String,
       default: '',
       env: 'LOGGLY_TOKEN',
+    },
+    subdomain: {
+      doc: 'Loggly subdomain',
+      format: String,
+      default: '',
+      env: 'LOGGLY_SUBDOMIAN',
+    },
+    username: {
+      doc: 'Loggly username',
+      format: String,
+      default: '',
+      env: 'LOGGLY_USERNAME',
+    },
+    password: {
+      doc: 'Loggly password',
+      format: String,
+      default: '',
+      env: 'LOGGLY_PASSWORD',
     },
   },
   alchemy: {
