@@ -816,9 +816,11 @@ module.exports =
 
 	  _createClass(LogUtil, null, [{
 	    key: 'log',
-	    value: function log(message) {
-	      logglyClient.log(guid + ' :: ' + message);
-	      console.log(guid + ' :: ' + message);
+	    value: function log(data) {
+	      var date = new Date().toJSON();
+	      var message = date + ' :: ' + guid + ' :: ' + data;
+	      logglyClient.log(message);
+	      console.log(message);
 	    }
 	  }]);
 

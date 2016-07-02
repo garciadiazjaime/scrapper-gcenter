@@ -1,3 +1,3 @@
 #! /bin/bash
 
-npm run cron
+npm run cron >> ${OPENSHIFT_LOG_DIR}/cron.log

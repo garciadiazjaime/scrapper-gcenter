@@ -16,8 +16,10 @@ import GuidUtil from '../guidUtil';
 const guid = GuidUtil.generate();
 
 export default class LogUtil {
-  static log(message) {
-    logglyClient.log(`${guid} :: ${message}`);
-    console.log(`${guid} :: ${message}`);
+  static log(data) {
+    const date = new Date().toJSON();
+    const message = `${date} :: ${guid} :: ${data}`;
+    logglyClient.log(message);
+    console.log(message);
   }
 }
