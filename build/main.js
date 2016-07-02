@@ -47,9 +47,9 @@ module.exports =
 
 	'use strict';
 
-	var _asyncUtil = __webpack_require__(1);
+	var _runGenerator = __webpack_require__(1);
 
-	var _asyncUtil2 = _interopRequireDefault(_asyncUtil);
+	var _runGenerator2 = _interopRequireDefault(_runGenerator);
 
 	var _requestUtil = __webpack_require__(2);
 
@@ -75,60 +75,74 @@ module.exports =
 
 	var _config2 = _interopRequireDefault(_config);
 
-	__webpack_require__(15);
+	var _logUtil = __webpack_require__(15);
+
+	var _logUtil2 = _interopRequireDefault(_logUtil);
+
+	__webpack_require__(18);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ports = __webpack_require__(16);
+	var ports = __webpack_require__(19);
 
 	function startRequest(port) {
 	  return new Promise(function (resolve, reject) {
-	    (0, _asyncUtil2.default)(regeneratorRuntime.mark(function _callee() {
+	    (0, _runGenerator2.default)(regeneratorRuntime.mark(function _callee() {
 	      var requestResponse, jsonData, portData, data, results;
 	      return regeneratorRuntime.wrap(function _callee$(_context) {
 	        while (1) {
 	          switch (_context.prev = _context.next) {
 	            case 0:
-	              console.log('getting data for ' + port.name + '...');
-	              _context.next = 3;
+	              _context.prev = 0;
+
+	              _logUtil2.default.log('getting data for ' + port.name + '...');
+	              _context.next = 4;
 	              return _requestUtil2.default.get(_config2.default.get('api.url'));
 
-	            case 3:
+	            case 4:
 	              requestResponse = _context.sent;
-	              _context.next = 6;
+	              _context.next = 7;
 	              return _xmlUtil2.default.parseToJson(requestResponse);
 
-	            case 6:
+	            case 7:
 	              jsonData = _context.sent;
 	              portData = _portModel2.default.extractData(jsonData, port.id);
 	              data = _queryUtil2.default.saveReport(portData, port.name);
-	              _context.next = 11;
+	              _context.next = 12;
 	              return _mongoUtil2.default.save(data);
 
-	            case 11:
+	            case 12:
 	              results = _context.sent;
 
 
 	              if (results) {
-	                console.log('...Garita ' + port.name + ' updated');
+	                _logUtil2.default.log('...Garita ' + port.name + ' updated');
 	                resolve();
 	              } else {
-	                console.log('...Error on garita ' + port.name);
+	                _logUtil2.default.log('...Error on garita ' + port.name);
 	                reject();
 	              }
+	              _context.next = 19;
+	              break;
 
-	            case 13:
+	            case 16:
+	              _context.prev = 16;
+	              _context.t0 = _context['catch'](0);
+
+	              _logUtil2.default.log('exception ' + _context.t0);
+
+	            case 19:
 	            case 'end':
 	              return _context.stop();
 	          }
 	        }
-	      }, _callee, this);
+	      }, _callee, this, [[0, 16]]);
 	    }))();
 	  });
 	}
 
 	var promises = [];
-	console.log('==== start ====');
+	_logUtil2.default.log('==== start ====');
 	for (var i = 0, len = ports.length; i < len; i++) {
 	  (function (port) {
 	    promises.push(startRequest(port));
@@ -136,9 +150,9 @@ module.exports =
 	}
 
 	Promise.all(promises).then(function () {
-	  console.log('==== done ====');
+	  _logUtil2.default.log('==== done ====');
 	}).catch(function (error) {
-	  console.log(error);
+	  _logUtil2.default.log('promise error ' + error);
 	});
 
 /***/ },
@@ -633,12 +647,30 @@ module.exports =
 	      env: 'DB_URL'
 	    }
 	  },
-	  winston: {
+	  loggly: {
 	    token: {
 	      doc: 'Loggly token',
 	      format: String,
 	      default: '',
 	      env: 'LOGGLY_TOKEN'
+	    },
+	    subdomain: {
+	      doc: 'Loggly subdomain',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_SUBDOMIAN'
+	    },
+	    username: {
+	      doc: 'Loggly username',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_USERNAME'
+	    },
+	    password: {
+	      doc: 'Loggly password',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_PASSWORD'
 	    }
 	  },
 	  alchemy: {
@@ -717,12 +749,72 @@ module.exports =
 
 /***/ },
 /* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _loggly = __webpack_require__(20);
+
+	var _loggly2 = _interopRequireDefault(_loggly);
+
+	var _config = __webpack_require__(12);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _guidUtil = __webpack_require__(21);
+
+	var _guidUtil2 = _interopRequireDefault(_guidUtil);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var logglyClient = _loggly2.default.createClient({
+	  token: _config2.default.get('loggly.token'),
+	  subdomain: _config2.default.get('loggly.subdomain'),
+	  auth: {
+	    username: _config2.default.get('loggly.username'),
+	    password: _config2.default.get('loggly.password')
+	  },
+	  tags: ['scrapper-gcenter']
+	});
+
+	var guid = _guidUtil2.default.generate();
+
+	var LogUtil = function () {
+	  function LogUtil() {
+	    _classCallCheck(this, LogUtil);
+	  }
+
+	  _createClass(LogUtil, null, [{
+	    key: 'log',
+	    value: function log(message) {
+	      logglyClient.log(guid + ' :: ' + message);
+	      console.log(guid + ' :: ' + message);
+	    }
+	  }]);
+
+	  return LogUtil;
+	}();
+
+	exports.default = LogUtil;
+
+/***/ },
+/* 16 */,
+/* 17 */,
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = require("babel-polyfill");
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -735,6 +827,50 @@ module.exports =
 			"name": "OTAY"
 		}
 	];
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	module.exports = require("loggly");
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/* eslint max-len: [2, 500, 4] */
+
+	var GuidUtil = function () {
+	  function GuidUtil() {
+	    _classCallCheck(this, GuidUtil);
+	  }
+
+	  _createClass(GuidUtil, null, [{
+	    key: "generate",
+	    value: function generate() {
+	      return "" + this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
+	    }
+	  }, {
+	    key: "s4",
+	    value: function s4() {
+	      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	    }
+	  }]);
+
+	  return GuidUtil;
+	}();
+
+	exports.default = GuidUtil;
 
 /***/ }
 /******/ ]);
