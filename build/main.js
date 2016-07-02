@@ -221,7 +221,6 @@ module.exports =
 	    value: function get(url) {
 	      return new Promise(function (resolve, reject) {
 	        (0, _request2.default)(url, function (error, response, html) {
-	          // console.log('error', error);
 	          if (error) {
 	            reject(error);
 	          } else {

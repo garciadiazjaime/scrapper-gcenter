@@ -5,7 +5,6 @@ export default class RequestUtil {
   static get(url) {
     return new Promise((resolve, reject) => {
       request(url, (error, response, html) => {
-        // console.log('error', error);
         if (error) {
           reject(error);
         } else {
