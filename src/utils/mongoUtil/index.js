@@ -41,7 +41,7 @@ export default class MongoUtil {
         .then((db) => {
           const collection = db.collection('report');
           var options = {
-              "sort": "-created"
+              sort: [['created', 'desc']]
           }
           collection.findOne({garita: data.name}, options, (error, document) => {
             if (error) {

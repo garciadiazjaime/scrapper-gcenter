@@ -464,7 +464,7 @@ module.exports =
 	        _this2.openConnection().then(function (db) {
 	          var collection = db.collection('report');
 	          var options = {
-	            "sort": "-created"
+	            sort: [['created', 'desc']]
 	          };
 	          collection.findOne({ garita: data.name }, options, function (error, document) {
 	            if (error) {
