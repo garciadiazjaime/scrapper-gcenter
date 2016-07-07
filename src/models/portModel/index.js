@@ -3,8 +3,30 @@ import _ from 'lodash';
 
 import CarModel from '../carModel';
 import PeopleModel from '../peopleModel';
+import MongoUtil from '../../utils/mongoUtil';
+import portsData from '../../constants/ports.js';
+
 
 export default class PortModel {
+
+  static getReport(city) {
+    return new Promise((resolve, reject) => {
+      let promises = [];
+      const ports = this.getCityPorts(portsData, city);
+      promises = ports.map(port => MongoUtil.getReport(port));
+      Promise.all(promises)
+        .then((results) => {
+          resolve(results);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  static getCityPorts(ports, city) {
+    return ports.filter(port => port.city.toUpperCase() === city.toUpperCase());
+  }
 
   static extractData(data, port) {
     const response = [];
