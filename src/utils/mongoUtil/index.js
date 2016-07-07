@@ -15,7 +15,7 @@ export default class MongoUtil {
     });
   }
 
-  static save(data) {
+  static saveReport(data) {
     return new Promise((resolve, reject) => {
       this.openConnection()
         .then((db) => {
@@ -25,6 +25,29 @@ export default class MongoUtil {
               reject(error);
             } else {
               resolve(results);
+            }
+            this.closeConnection(db);
+          });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  static getReport(data) {
+    return new Promise((resolve, reject) => {
+      this.openConnection()
+        .then((db) => {
+          const collection = db.collection('report');
+          var options = {
+              "sort": "-created"
+          }
+          collection.findOne({garita: data.name}, options, (error, document) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(document);
             }
             this.closeConnection(db);
           });

@@ -1,32 +1,36 @@
 import express from 'express';
-import fs from 'fs';
+
+import stubsRoutes from './routes/stubs';
+import PortModel from './models/portModel';
+const env = process.env;
 
 const app = express();
+stubsRoutes(app);
 
-app.get('/ports', (req, res) => {
-  fs.readFile('resources/stubs/ports.xml', (err, data) => {
-    res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
-    res.write(data);
-    res.end();
-  });
+app.get('/report', (req, res) => {
+  const city = req.param('city');
+  if (city) {
+    PortModel.getReport(city)
+      .then((data) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(data));
+      });
+  } else {
+    res.send(':(');
+  }
 });
 
-app.get('/san-ysidro', (req, res) => {
-  fs.readFile('resources/stubs/cbp_san_ysidro.html', (err, data) => {
-    res.writeHead(200, { 'Content-Type': 'text/html', 'Content-Length': data.length });
-    res.write(data);
-    res.end();
-  });
+app.get('/health', (req, res) => {
+  res.writeHead(200);
+  res.end();
 });
 
-app.get('/otay', (req, res) => {
-  fs.readFile('resources/stubs/cbp_otay.html', (err, data) => {
-    res.writeHead(200, { 'Content-Type': 'text/html', 'Content-Length': data.length });
-    res.write(data);
-    res.end();
-  });
+app.get('*', (req, res) => {
+  res.writeHead(200);
+  res.write(':)');
+  res.end();
 });
 
-app.listen('3000', () => {
-  console.log('Example app listening on port 3000');
+app.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', () => {
+  console.log(`Application worker ${process.pid} started...`);
 });

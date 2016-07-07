@@ -10,7 +10,7 @@ import { MongoClient } from 'mongodb';
 import config from '../../../src/config';
 
 describe('MongoUtil', () => {
-  describe('save() resolved', () => {
+  describe('saveReport() resolved', () => {
     const validResponse = 'valid_response';
     const validData = 'valid_data';
     const dbStub = {
@@ -30,13 +30,13 @@ describe('MongoUtil', () => {
     });
 
     it('gets a valid response', () => {
-      const results = MongoUtil.save(validData);
+      const results = MongoUtil.saveReport(validData);
       expect(MongoUtil.openConnection.called).eq(true);
       return expect(results).to.eventually.equal(validResponse);
     });
   });
 
-  describe('save() rejected', () => {
+  describe('saveReport() rejected', () => {
     const invalidResponse = 'invalid_response';
     const validData = 'valid_data';
 
@@ -49,7 +49,7 @@ describe('MongoUtil', () => {
     });
 
     it('gets an invalid response when cant open a db connection', () => {
-      const results = MongoUtil.save(validData);
+      const results = MongoUtil.saveReport(validData);
       expect(MongoUtil.openConnection.called).eq(true);
       return expect(results).to.eventually.be.rejectedWith(invalidResponse);
     });
@@ -75,7 +75,7 @@ describe('MongoUtil', () => {
     });
 
     it('gets an invalid response when cant insert data', () => {
-      const results = MongoUtil.save(validData);
+      const results = MongoUtil.saveReport(validData);
       expect(MongoUtil.openConnection.called).eq(true);
       return expect(results).to.eventually.be.rejectedWith(invalidResponse);
     });
