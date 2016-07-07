@@ -51,6 +51,10 @@ module.exports =
 
 	var _express2 = _interopRequireDefault(_express);
 
+	var _stubs = __webpack_require__(2);
+
+	var _stubs2 = _interopRequireDefault(_stubs);
+
 	var _portModel = __webpack_require__(4);
 
 	var _portModel2 = _interopRequireDefault(_portModel);
@@ -59,11 +63,8 @@ module.exports =
 
 	var env = process.env;
 
-	// import stubsRoutes from './routes/stubs';
-
-
 	var app = (0, _express2.default)();
-	// stubsRoutes(app);
+	(0, _stubs2.default)(app);
 
 	app.get('/report', function (req, res) {
 	  var city = req.param('city');
@@ -99,8 +100,66 @@ module.exports =
 	module.exports = require("express");
 
 /***/ },
-/* 2 */,
-/* 3 */,
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _fs = __webpack_require__(3);
+
+	var _fs2 = _interopRequireDefault(_fs);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = function (app) {
+	  app.get('/ports', function (req, res) {
+	    _fs2.default.readFile('resources/stubs/ports.xml', function (err, data) {
+	      if (!err) {
+	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	        res.write(data);
+	      } else {
+	        res.writeHead(404);
+	      }
+	      res.end();
+	    });
+	  });
+
+	  app.get('/san-ysidro', function (req, res) {
+	    _fs2.default.readFile('resources/stubs/cbp_san_ysidro.html', function (err, data) {
+	      if (!err) {
+	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	        res.write(data);
+	      } else {
+	        res.writeHead(404);
+	      }
+	      res.end();
+	    });
+	  });
+
+	  app.get('/otay', function (req, res) {
+	    _fs2.default.readFile('resources/stubs/cbp_otay.html', function (err, data) {
+	      if (!err) {
+	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	        res.write(data);
+	      } else {
+	        res.writeHead(404);
+	      }
+	      res.end();
+	    });
+	  });
+	};
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	module.exports = require("fs");
+
+/***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 

@@ -1,11 +1,11 @@
 import express from 'express';
 
-// import stubsRoutes from './routes/stubs';
+import stubsRoutes from './routes/stubs';
 import PortModel from './models/portModel';
 const env = process.env;
 
 const app = express();
-// stubsRoutes(app);
+stubsRoutes(app);
 
 app.get('/report', (req, res) => {
   const city = req.param('city');

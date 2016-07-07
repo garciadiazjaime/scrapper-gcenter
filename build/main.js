@@ -47,7 +47,7 @@ module.exports =
 
 	'use strict';
 
-	var _runGenerator = __webpack_require__(17);
+	var _runGenerator = __webpack_require__(1);
 
 	var _runGenerator2 = _interopRequireDefault(_runGenerator);
 
@@ -67,7 +67,7 @@ module.exports =
 
 	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
 
-	var _queryUtil = __webpack_require__(14);
+	var _queryUtil = __webpack_require__(15);
 
 	var _queryUtil2 = _interopRequireDefault(_queryUtil);
 
@@ -75,15 +75,17 @@ module.exports =
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _logUtil = __webpack_require__(18);
+	var _logUtil = __webpack_require__(16);
 
 	var _logUtil2 = _interopRequireDefault(_logUtil);
 
-	__webpack_require__(15);
+	var _ports = __webpack_require__(14);
+
+	var _ports2 = _interopRequireDefault(_ports);
+
+	__webpack_require__(19);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var ports = __webpack_require__(16);
 
 	function startRequest(port) {
 	  return new Promise(function (resolve, reject) {
@@ -109,7 +111,7 @@ module.exports =
 	              portData = _portModel2.default.extractData(jsonData, port.id);
 	              data = _queryUtil2.default.saveReport(portData, port.name);
 	              _context.next = 12;
-	              return _mongoUtil2.default.save(data);
+	              return _mongoUtil2.default.saveReport(data);
 
 	            case 12:
 	              results = _context.sent;
@@ -143,10 +145,10 @@ module.exports =
 
 	var promises = [];
 	_logUtil2.default.log('==== start ====');
-	for (var i = 0, len = ports.length; i < len; i++) {
+	for (var i = 0, len = _ports2.default.length; i < len; i++) {
 	  (function (port) {
 	    promises.push(startRequest(port));
-	  })(ports[i]);
+	  })(_ports2.default[i]);
 	}
 
 	Promise.all(promises).then(function () {
@@ -156,7 +158,42 @@ module.exports =
 	});
 
 /***/ },
-/* 1 */,
+/* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (makeGenerator) {
+	  var _this = this,
+	      _arguments = arguments;
+
+	  return function () {
+	    var generator = makeGenerator.apply(_this, _arguments);
+
+	    function handle(result) {
+	      // result => { done: [Boolean], value: [Object] }
+	      if (result.done) return Promise.resolve(result.value);
+
+	      return Promise.resolve(result.value).then(function (res) {
+	        return handle(generator.next(res));
+	      }, function (err) {
+	        return handle(generator.throw(err));
+	      });
+	    }
+
+	    try {
+	      return handle(generator.next());
+	    } catch (ex) {
+	      return Promise.reject(ex);
+	    }
+	  };
+	};
+
+/***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -304,6 +341,14 @@ module.exports =
 
 	var _peopleModel2 = _interopRequireDefault(_peopleModel);
 
+	var _mongoUtil = __webpack_require__(10);
+
+	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+
+	var _ports = __webpack_require__(14);
+
+	var _ports2 = _interopRequireDefault(_ports);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -314,15 +359,40 @@ module.exports =
 	  }
 
 	  _createClass(PortModel, null, [{
+	    key: 'getReport',
+	    value: function getReport(city) {
+	      var _this = this;
+
+	      return new Promise(function (resolve, reject) {
+	        var promises = [];
+	        var ports = _this.getCityPorts(_ports2.default, city);
+	        promises = ports.map(function (port) {
+	          return _mongoUtil2.default.getReport(port);
+	        });
+	        Promise.all(promises).then(function (results) {
+	          resolve(results);
+	        }).catch(function (error) {
+	          reject(error);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'getCityPorts',
+	    value: function getCityPorts(ports, city) {
+	      return ports.filter(function (port) {
+	        return port.city.toUpperCase() === city.toUpperCase();
+	      });
+	    }
+	  }, {
 	    key: 'extractData',
 	    value: function extractData(data, port) {
-	      var _this = this;
+	      var _this2 = this;
 
 	      var response = [];
 	      if (this.isDataValid(data)) {
 	        var ports = data.border_wait_time.port;
 	        ports.map(function (item) {
-	          if (_this.isPortValid(item, port)) {
+	          if (_this2.isPortValid(item, port)) {
 	            var _CarModel$extractData = _carModel2.default.extractData(item);
 
 	            var carNormal = _CarModel$extractData.carNormal;
@@ -522,8 +592,8 @@ module.exports =
 	      });
 	    }
 	  }, {
-	    key: 'save',
-	    value: function save(data) {
+	    key: 'saveReport',
+	    value: function saveReport(data) {
 	      var _this = this;
 
 	      return new Promise(function (resolve, reject) {
@@ -536,6 +606,30 @@ module.exports =
 	              resolve(results);
 	            }
 	            _this.closeConnection(db);
+	          });
+	        }).catch(function (error) {
+	          reject(error);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'getReport',
+	    value: function getReport(data) {
+	      var _this2 = this;
+
+	      return new Promise(function (resolve, reject) {
+	        _this2.openConnection().then(function (db) {
+	          var collection = db.collection('report');
+	          var options = {
+	            "sort": "-created"
+	          };
+	          collection.findOne({ garita: data.name }, options, function (error, document) {
+	            if (error) {
+	              reject(error);
+	            } else {
+	              resolve(document);
+	            }
+	            _this2.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
@@ -673,6 +767,25 @@ module.exports =
 
 /***/ },
 /* 14 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = [{
+	  id: '250401',
+	  name: 'SAN_YSIDRO',
+	  city: 'TIJUANA'
+	}, {
+	  id: '250601',
+	  name: 'OTAY',
+	  city: 'TIJUANA'
+	}];
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -713,64 +826,7 @@ module.exports =
 	exports.default = QueryUtil;
 
 /***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	module.exports = require("babel-polyfill");
-
-/***/ },
 /* 16 */
-/***/ function(module, exports) {
-
-	module.exports = [
-		{
-			"id": 250401,
-			"name": "SAN_YSIDRO"
-		},
-		{
-			"id": 250601,
-			"name": "OTAY"
-		}
-	];
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (makeGenerator) {
-	  var _this = this,
-	      _arguments = arguments;
-
-	  return function () {
-	    var generator = makeGenerator.apply(_this, _arguments);
-
-	    function handle(result) {
-	      // result => { done: [Boolean], value: [Object] }
-	      if (result.done) return Promise.resolve(result.value);
-
-	      return Promise.resolve(result.value).then(function (res) {
-	        return handle(generator.next(res));
-	      }, function (err) {
-	        return handle(generator.throw(err));
-	      });
-	    }
-
-	    try {
-	      return handle(generator.next());
-	    } catch (ex) {
-	      return Promise.reject(ex);
-	    }
-	  };
-	};
-
-/***/ },
-/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -781,7 +837,7 @@ module.exports =
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _loggly = __webpack_require__(19);
+	var _loggly = __webpack_require__(17);
 
 	var _loggly2 = _interopRequireDefault(_loggly);
 
@@ -789,7 +845,7 @@ module.exports =
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _guidUtil = __webpack_require__(20);
+	var _guidUtil = __webpack_require__(18);
 
 	var _guidUtil2 = _interopRequireDefault(_guidUtil);
 
@@ -830,13 +886,13 @@ module.exports =
 	exports.default = LogUtil;
 
 /***/ },
-/* 19 */
+/* 17 */
 /***/ function(module, exports) {
 
 	module.exports = require("loggly");
 
 /***/ },
-/* 20 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -872,6 +928,12 @@ module.exports =
 	}();
 
 	exports.default = GuidUtil;
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = require("babel-polyfill");
 
 /***/ }
 /******/ ]);

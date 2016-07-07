@@ -6,7 +6,7 @@ import MongoUtil from './utils/mongoUtil';
 import QueryUtil from './utils/mongoUtil/queryUtil';
 import config from './config';
 import logUtil from './utils/logUtil';
-const ports = require('./constants/ports.json');
+import portsData from './constants/ports';
 
 import 'babel-polyfill';
 
@@ -16,14 +16,13 @@ function startRequest(port) {
       try {
         logUtil.log(`getting data for ${port.name}...`);
         const requestResponse = yield RequestUtil.get(config.get('api.url'));
-
         const jsonData = yield XmlUtil.parseToJson(requestResponse);
 
         const portData = PortModel.extractData(jsonData, port.id);
 
         const data = QueryUtil.saveReport(portData, port.name);
 
-        const results = yield MongoUtil.save(data);
+        const results = yield MongoUtil.saveReport(data);
 
         if (results) {
           logUtil.log(`...Garita ${port.name} updated`);
@@ -41,10 +40,10 @@ function startRequest(port) {
 
 const promises = [];
 logUtil.log('==== start ====');
-for (let i = 0, len = ports.length; i < len; i++) {
+for (let i = 0, len = portsData.length; i < len; i++) {
   ((port) => {
     promises.push(startRequest(port));
-  })(ports[i]);
+  })(portsData[i]);
 }
 
 Promise.all(promises)
