@@ -47,23 +47,43 @@ module.exports =
 
 	'use strict';
 
-	var _express = __webpack_require__(1);
+	var _newrelic = __webpack_require__(1);
+
+	var _newrelic2 = _interopRequireDefault(_newrelic);
+
+	var _express = __webpack_require__(2);
 
 	var _express2 = _interopRequireDefault(_express);
 
-	var _stubs = __webpack_require__(2);
+	var _cors = __webpack_require__(3);
+
+	var _cors2 = _interopRequireDefault(_cors);
+
+	var _bodyParser = __webpack_require__(4);
+
+	var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+	var _stubs = __webpack_require__(5);
 
 	var _stubs2 = _interopRequireDefault(_stubs);
 
-	var _portModel = __webpack_require__(4);
+	var _portModel = __webpack_require__(7);
 
 	var _portModel2 = _interopRequireDefault(_portModel);
 
+	var _config = __webpack_require__(13);
+
+	var _config2 = _interopRequireDefault(_config);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var env = process.env;
-
 	var app = (0, _express2.default)();
+	app.use(_bodyParser2.default.json());
+	app.use(_bodyParser2.default.urlencoded({
+	  extended: false
+	}));
+	app.locals.newrelic = _newrelic2.default;
+
 	(0, _stubs2.default)(app);
 
 	app.get('/report', function (req, res) {
@@ -78,6 +98,13 @@ module.exports =
 	  }
 	});
 
+	app.post('/user/report', (0, _cors2.default)(), function (req, res) {
+	  res.setHeader('Content-Type', 'application/json');
+	  console.log('here', req.body);
+	  console.log(req);
+	  res.send(true);
+	});
+
 	app.get('/health', function (req, res) {
 	  res.writeHead(200);
 	  res.end();
@@ -89,18 +116,44 @@ module.exports =
 	  res.end();
 	});
 
-	app.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', function () {
-	  console.log('Application worker ' + process.pid + ' started...');
+	app.set('ipaddress', _config2.default.get('ipaddress'));
+	app.set('port', _config2.default.get('port'));
+
+	var server = app.listen(app.get('port'), app.get('ipaddress'), function (err) {
+	  if (err) {
+	    console.log(err);
+	  }
+	  var host = server.address().address;
+	  var port = server.address().port;
+	  console.log('Example app listening at http://%s:%s', host, port);
 	});
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
-	module.exports = require("express");
+	module.exports = require("newrelic");
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	module.exports = require("express");
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	module.exports = require("cors");
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = require("body-parser");
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -109,7 +162,7 @@ module.exports =
 	  value: true
 	});
 
-	var _fs = __webpack_require__(3);
+	var _fs = __webpack_require__(6);
 
 	var _fs2 = _interopRequireDefault(_fs);
 
@@ -154,13 +207,13 @@ module.exports =
 	};
 
 /***/ },
-/* 3 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
 
 /***/ },
-/* 4 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -172,23 +225,23 @@ module.exports =
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
 
 
-	var _lodash = __webpack_require__(5);
+	var _lodash = __webpack_require__(8);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _carModel = __webpack_require__(6);
+	var _carModel = __webpack_require__(9);
 
 	var _carModel2 = _interopRequireDefault(_carModel);
 
-	var _peopleModel = __webpack_require__(7);
+	var _peopleModel = __webpack_require__(10);
 
 	var _peopleModel2 = _interopRequireDefault(_peopleModel);
 
-	var _mongoUtil = __webpack_require__(8);
+	var _mongoUtil = __webpack_require__(11);
 
 	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
 
-	var _ports = __webpack_require__(12);
+	var _ports = __webpack_require__(15);
 
 	var _ports2 = _interopRequireDefault(_ports);
 
@@ -282,13 +335,13 @@ module.exports =
 	exports.default = PortModel;
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = require("lodash");
 
 /***/ },
-/* 6 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -344,7 +397,7 @@ module.exports =
 	exports.default = CarModel;
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -395,7 +448,7 @@ module.exports =
 	exports.default = PeopleModel;
 
 /***/ },
-/* 8 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -406,9 +459,9 @@ module.exports =
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _mongodb = __webpack_require__(9);
+	var _mongodb = __webpack_require__(12);
 
-	var _config = __webpack_require__(10);
+	var _config = __webpack_require__(13);
 
 	var _config2 = _interopRequireDefault(_config);
 
@@ -492,13 +545,13 @@ module.exports =
 	exports.default = MongoUtil;
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -507,7 +560,7 @@ module.exports =
 	  value: true
 	});
 
-	var _convict = __webpack_require__(11);
+	var _convict = __webpack_require__(14);
 
 	var _convict2 = _interopRequireDefault(_convict);
 
@@ -521,7 +574,7 @@ module.exports =
 	    default: 'development',
 	    env: 'NODE_ENV'
 	  },
-	  ip: {
+	  ipaddress: {
 	    doc: 'The IP address to bind.',
 	    format: 'ipaddress',
 	    default: '127.0.0.1',
@@ -603,13 +656,13 @@ module.exports =
 	exports.default = config;
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = require("convict");
 
 /***/ },
-/* 12 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
