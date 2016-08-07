@@ -1,10 +1,20 @@
+import newrelic from 'newrelic';
 import express from 'express';
+import cors from 'cors';
 
+import bodyParser from 'body-parser';
 import stubsRoutes from './routes/stubs';
 import PortModel from './models/portModel';
-const env = process.env;
+import PeopleModel from './models/peopleModel';
+import config from './config';
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false,
+}));
+app.locals.newrelic = newrelic;
+
 stubsRoutes(app);
 
 app.get('/report', (req, res) => {
@@ -20,6 +30,18 @@ app.get('/report', (req, res) => {
   }
 });
 
+app.post('/user/report', cors(), (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  const data = req.body;
+  PeopleModel.saveReport(data)
+    .then((results) => {
+      res.send(results);
+    })
+    .catch((error) => {
+      res.status(200).send(error);
+    });
+});
+
 app.get('/health', (req, res) => {
   res.writeHead(200);
   res.end();
@@ -28,9 +50,16 @@ app.get('/health', (req, res) => {
 app.get('*', (req, res) => {
   res.writeHead(200);
   res.write(':)');
-  res.end();
 });
 
-app.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', () => {
-  console.log(`Application worker ${process.pid} started...`);
+app.set('ipaddress', config.get('ipaddress'));
+app.set('port', config.get('port'));
+
+const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
+  if (err) {
+    console.log(err);
+  }
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
 });
