@@ -1,4 +1,5 @@
 /* eslint max-len: [2, 500, 4] */
+import MongoUtil from '../../utils/mongoUtil';
 
 export default class PeopleModel {
 
@@ -21,5 +22,17 @@ export default class PeopleModel {
         lanes: ready.lanes_open.pop(),
       },
     } : null;
+  }
+
+  static saveReport(data) {
+    return new Promise((resolve, reject) => {
+      MongoUtil.saveData('userReport', data)
+        .then((results) => {
+          resolve(results);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 }
