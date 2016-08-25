@@ -26,13 +26,21 @@ export default class PeopleModel {
 
   static saveReport(data) {
     return new Promise((resolve, reject) => {
-      MongoUtil.saveData('userReport', data)
-        .then((results) => {
-          resolve(results);
-        })
-        .catch((error) => {
-          reject(error);
-        });
+      if (data.port && data.place && data.time) {
+        MongoUtil.saveData('userReport', data)
+          .then((results) => {
+            if (results.result && results.result.ok && results.result.ok === 1) {
+              resolve({ status: true });
+            } else {
+              reject({ status: false });
+            }
+          })
+          .catch(() => {
+            resolve({ status: false });
+          });
+      } else {
+        reject({ status: false });
+      }
     });
   }
 }
