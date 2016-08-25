@@ -1,6 +1,5 @@
 import newrelic from 'newrelic';
 import express from 'express';
-import cors from 'cors';
 
 import bodyParser from 'body-parser';
 import stubsRoutes from './routes/stubs';
@@ -30,11 +29,11 @@ app.get('/report', (req, res) => {
   }
 });
 
-app.post('/user/report', cors(), (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
+app.post('/user/report', (req, res) => {
   const data = req.body;
   PeopleModel.saveReport(data)
     .then((results) => {
+      res.setHeader('Content-Type', 'application/json');
       res.send(results);
     })
     .catch((error) => {

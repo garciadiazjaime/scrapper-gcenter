@@ -8,7 +8,7 @@ const config = convict({
     default: 'development',
     env: 'NODE_ENV',
   },
-  ip: {
+  ipaddress: {
     doc: 'The IP address to bind.',
     format: 'ipaddress',
     default: '127.0.0.1',
@@ -17,7 +17,7 @@ const config = convict({
   port: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 3030,
+    default: 3000,
     env: 'PORT',
   },
   api: {
