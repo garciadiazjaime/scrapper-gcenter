@@ -1,3 +1,4 @@
+/* eslint max-len: [2, 500, 4] */
 import newrelic from 'newrelic';
 import express from 'express';
 
@@ -5,6 +6,7 @@ import bodyParser from 'body-parser';
 import stubsRoutes from './routes/stubs';
 import PortModel from './models/portModel';
 import PeopleModel from './models/peopleModel';
+import TwitterUtil from './utils/twitterUtil';
 import config from './config';
 
 const app = express();
@@ -33,8 +35,19 @@ app.post('/user/report', (req, res) => {
   const data = req.body;
   PeopleModel.saveReport(data)
     .then((results) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.send(results);
+      const twitterUtil = new TwitterUtil();
+      const status = TwitterUtil.formatStatus(data);
+      twitterUtil.postTweet(status)
+        .then(() => {
+          res.setHeader('Content-Type', 'application/json');
+          res.send(results);
+        }, (error) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.send(error);
+        })
+        .catch((error) => {
+          res.status(200).send(error);
+        });
     })
     .catch((error) => {
       res.status(200).send(error);
