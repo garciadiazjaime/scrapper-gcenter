@@ -82,6 +82,50 @@ const config = convict({
     default: '',
     env: 'MINT_TOKEN',
   },
+  twitter: {
+    key: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_KEY',
+    },
+    secret: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_SECRET',
+    },
+    tokenKey: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_TOKEN_KEY',
+    },
+    tokenSecret: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_TOKEN_SECRET',
+    },
+    maxRequests: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_REQUEST',
+    },
+    maxTime: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_TIME',
+    },
+    maxTweets: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_TWEETS',
+    },
+  },
 });
 
 // Perform validation
