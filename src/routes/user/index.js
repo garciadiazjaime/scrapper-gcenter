@@ -29,7 +29,6 @@ export default (app) => {
     const city = req.param('city');
     if (city) {
       const twitterUtil = new TwitterUtil();
-      // const status = TwitterUtil.formatStatus(data);
       twitterUtil.getTweets('garita_center')
         .then((results) => {
           res.setHeader('Content-Type', 'application/json');
