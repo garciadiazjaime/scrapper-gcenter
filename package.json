@@ -25,6 +25,7 @@
     "express": "^4.14.0",
     "lodash": "^4.13.1",
     "loggly": "^1.1.0",
+    "moment": "^2.14.1",
     "mongodb": "^2.1.18",
     "newrelic": "^1.29.0",
     "request": "^2.72.0",

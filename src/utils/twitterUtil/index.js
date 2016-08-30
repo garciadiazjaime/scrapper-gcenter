@@ -1,76 +1,57 @@
-var Twitter = require('twitter');
-import { toTitleCase } from '../string';
+import Twitter from 'twitter';
+import _ from 'lodash';
+import moment from 'moment';
 
-// var client = new Twitter({
-//   consumer_key: 'j9KGOKjeCHr2TpuC52lld1U2l',
-//   consumer_secret: 'yH19HEUHxeaH9jkMvncaqUvqpA7WEr9MfIzrVMBQ6vV1nNolsN',
-//   access_token_key: '764671720926044160-RHYr36phFAGOrVCpwT58UDZPbfotDgw',
-//   access_token_secret: 'BIZlLBTuxaF4PVbvBZcaQZSTVeIFkuJIdAlSprBQ08iMR',
-// });
-//
-// // var params = {screen_name: 'garita_center'};
-// // client.get('statuses/user_timeline', params, function(error, tweets, response) {
-// //   console.log('error', error);
-// //   console.log('tweets', tweets);
-// // });
-//
-// // var params = {screen_name: 'garita_center'};
-// // client.get('account/settings', params, function(error, tweets, response) {
-// //   console.log('error', error);
-// //   console.log('tweets', tweets);
-// // });
-//
-// var data = {
-//   entry: 'ready_lane',
-//   place: 'place_b',
-//   port: 'san_ysidro',
-//   time: 'time_b',
-//   type:'car',
-// };
-//
-// var lat = data.port === 'san_ysidro' ? '32.5413122' : '32.5452122'
-// var long = data.port === 'san_ysidro' ? '-117.0363838' : '-116.9546235';
-//
-// var postData = {
-//   status: `Usuario en Garita de ${data.port},
-//     por ${data.entry} - ${data.type}, reporta que desde ${data.place} lleva ${data.time} mins.`,
-//   lat,
-//   long,
-//   display_coordinates: true,
-//   geo_enabled: true,
-// };
-//
-//
-// client.post('statuses/update', postData,  function(error, tweet, response) {
-//   console.log('error', error);
-//   console.log('tweet', tweet);  // Tweet body.
-//   // console.log('response', response);  // Raw response object.
-// });
+import { toTitleCase } from '../string';
+import config from '../../config';
+const constants = {
+  twitter: {
+    maxRequests: config.get('twitter.maxRequests'),
+    maxTime: config.get('twitter.maxTime'),
+    maxTweets: config.get('twitter.maxTweets'),
+  }
+};
+
+const cache = {
+  tweets: {
+    updated: new Date(),
+    data: [],
+    requests: 0,
+  },
+};
 
 export default class TwitterUtil {
 
   constructor() {
     this.client = new Twitter({
-      consumer_key: 'j9KGOKjeCHr2TpuC52lld1U2l',
-      consumer_secret: 'yH19HEUHxeaH9jkMvncaqUvqpA7WEr9MfIzrVMBQ6vV1nNolsN',
-      access_token_key: '764671720926044160-RHYr36phFAGOrVCpwT58UDZPbfotDgw',
-      access_token_secret: 'BIZlLBTuxaF4PVbvBZcaQZSTVeIFkuJIdAlSprBQ08iMR',
+      consumer_key: config.get('twitter.key'),
+      consumer_secret: config.get('twitter.secret'),
+      access_token_key: config.get('twitter.tokenKey'),
+      access_token_secret: config.get('twitter.tokenSecret'),
     });
   }
 
   getTweets(screen_name) {
-    // const params = {screen_name: 'garita_center'};
     const params = {
       screen_name,
     };
     return new Promise((resolve, reject) => {
-      this.client.get('statuses/user_timeline', params, (error, tweets) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(tweets)
-        }
-      });
+      const now = new Date();
+      // twitter docs endpoint
+      // https://dev.twitter.com/rest/reference/get/statuses/user_timeline
+      const seconds = Math.round(moment(moment(now)).diff(cache.tweets.updated) / 1000);
+      if (cache.tweets.data.length == 0 || cache.tweets.requests < constants.twitter.maxRequests || seconds > constants.twitter.maxTime ) {
+        this.client.get('statuses/user_timeline', params, (error, tweets) => {
+          if (error) {
+            reject(error);
+          } else {
+            this.addNewTweets(cache.tweets.data, tweets);
+            resolve(cache.tweets.data);
+          }
+        });
+      } else {
+        resolve(cache.tweets.data)
+      }
     });
   }
 
@@ -84,6 +65,19 @@ export default class TwitterUtil {
         }
       });
     });
+  }
+
+  addNewTweets(currentTweets, tweetsRequested) {
+    tweetsRequested.map((item) => {
+      const tweet = _.find(currentTweets, {id: item.id});
+      if (!tweet) {
+        cache.tweets.data.push(item);
+      }
+    });
+    if (cache.tweets.data.length > constants.twitter.maxTweets) {
+      const tweetsToRemove = cache.tweets.data.length - constants.twitter.maxTweets;
+      cache.tweets.data = _.slice(cache.tweets.data, tweetsToRemove);
+    }
   }
 
   static formatStatus(data) {
