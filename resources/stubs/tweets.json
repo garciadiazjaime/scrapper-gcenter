@@ -1,0 +1,378 @@
+[{
+  "created_at": "Fri Aug 26 18:44:56 +0000 2016",
+  "id": 769244252832272400,
+  "id_str": "769244252832272384",
+  "text": "Usuario en Garita de Otay, por Ready Lane - Carro, reporta que desde En El Parque De La Amistad lleva 4 Hrs",
+  "truncated": false,
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [],
+    "urls": []
+  },
+  "source": "<a href=\"http://www.garitacenter.com/\" rel=\"nofollow\">Garita Center</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 764671720926044200,
+    "id_str": "764671720926044160",
+    "name": "GaritaCenter",
+    "screen_name": "garita_center",
+    "location": "",
+    "description": "",
+    "url": null,
+    "entities": {
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 9,
+    "friends_count": 13,
+    "listed_count": 0,
+    "created_at": "Sun Aug 14 03:55:20 +0000 2016",
+    "favourites_count": 0,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": true,
+    "verified": false,
+    "statuses_count": 4,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_image_url_https": "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_link_color": "2B7BB9",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": true,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false
+  },
+  "geo": {
+    "type": "Point",
+    "coordinates": [32.5452122, -116.9546235]
+  },
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [-116.9546235, 32.5452122]
+  },
+  "place": {
+    "id": "2400156d6de057e3",
+    "url": "https://api.twitter.com/1.1/geo/id/2400156d6de057e3.json",
+    "place_type": "city",
+    "name": "Tijuana",
+    "full_name": "Tijuana, Baja California",
+    "country_code": "MX",
+    "country": "Mexico",
+    "contained_within": [],
+    "bounding_box": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-117.2984211, 32.0982919],
+          [-116.5597831, 32.0982919],
+          [-116.5597831, 32.567461],
+          [-117.2984211, 32.567461]
+        ]
+      ]
+    },
+    "attributes": {}
+  },
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 0,
+  "favorite_count": 0,
+  "favorited": false,
+  "retweeted": false,
+  "lang": "es"
+}, {
+  "created_at": "Thu Aug 25 20:42:17 +0000 2016",
+  "id": 768911396285345800,
+  "id_str": "768911396285345792",
+  "text": "Usuario en Garita de otay, por ready_lane - car, reporta que desde place_e lleva time_h mins.",
+  "truncated": false,
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [],
+    "urls": []
+  },
+  "source": "<a href=\"http://www.garitacenter.com/\" rel=\"nofollow\">Garita Center</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 764671720926044200,
+    "id_str": "764671720926044160",
+    "name": "GaritaCenter",
+    "screen_name": "garita_center",
+    "location": "",
+    "description": "",
+    "url": null,
+    "entities": {
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 9,
+    "friends_count": 13,
+    "listed_count": 0,
+    "created_at": "Sun Aug 14 03:55:20 +0000 2016",
+    "favourites_count": 0,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": true,
+    "verified": false,
+    "statuses_count": 4,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_image_url_https": "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_link_color": "2B7BB9",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": true,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false
+  },
+  "geo": {
+    "type": "Point",
+    "coordinates": [32.5452122, -116.9546235]
+  },
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [-116.9546235, 32.5452122]
+  },
+  "place": {
+    "id": "2400156d6de057e3",
+    "url": "https://api.twitter.com/1.1/geo/id/2400156d6de057e3.json",
+    "place_type": "city",
+    "name": "Tijuana",
+    "full_name": "Tijuana, Baja California",
+    "country_code": "MX",
+    "country": "Mexico",
+    "contained_within": [],
+    "bounding_box": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-117.2984211, 32.0982919],
+          [-116.5597831, 32.0982919],
+          [-116.5597831, 32.567461],
+          [-117.2984211, 32.567461]
+        ]
+      ]
+    },
+    "attributes": {}
+  },
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 0,
+  "favorite_count": 0,
+  "favorited": false,
+  "retweeted": false,
+  "lang": "es"
+}, {
+  "created_at": "Thu Aug 25 20:39:30 +0000 2016",
+  "id": 768910697891766300,
+  "id_str": "768910697891766274",
+  "text": "Usuario en Garita de san_ysidro, por ready_lane - car, reporta que desde place_b lleva time_d mins.",
+  "truncated": false,
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [],
+    "urls": []
+  },
+  "source": "<a href=\"http://www.garitacenter.com/\" rel=\"nofollow\">Garita Center</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 764671720926044200,
+    "id_str": "764671720926044160",
+    "name": "GaritaCenter",
+    "screen_name": "garita_center",
+    "location": "",
+    "description": "",
+    "url": null,
+    "entities": {
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 9,
+    "friends_count": 13,
+    "listed_count": 0,
+    "created_at": "Sun Aug 14 03:55:20 +0000 2016",
+    "favourites_count": 0,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": true,
+    "verified": false,
+    "statuses_count": 4,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_image_url_https": "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_link_color": "2B7BB9",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": true,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false
+  },
+  "geo": {
+    "type": "Point",
+    "coordinates": [32.5413122, -117.0363838]
+  },
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [-117.0363838, 32.5413122]
+  },
+  "place": {
+    "id": "2400156d6de057e3",
+    "url": "https://api.twitter.com/1.1/geo/id/2400156d6de057e3.json",
+    "place_type": "city",
+    "name": "Tijuana",
+    "full_name": "Tijuana, Baja California",
+    "country_code": "MX",
+    "country": "Mexico",
+    "contained_within": [],
+    "bounding_box": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-117.2984211, 32.0982919],
+          [-116.5597831, 32.0982919],
+          [-116.5597831, 32.567461],
+          [-117.2984211, 32.567461]
+        ]
+      ]
+    },
+    "attributes": {}
+  },
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 0,
+  "favorite_count": 0,
+  "favorited": false,
+  "retweeted": false,
+  "lang": "es"
+}, {
+  "created_at": "Sun Aug 14 20:46:01 +0000 2016",
+  "id": 764926070239797200,
+  "id_str": "764926070239797248",
+  "text": "first tweet",
+  "truncated": false,
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [],
+    "urls": []
+  },
+  "source": "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 764671720926044200,
+    "id_str": "764671720926044160",
+    "name": "GaritaCenter",
+    "screen_name": "garita_center",
+    "location": "",
+    "description": "",
+    "url": null,
+    "entities": {
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 9,
+    "friends_count": 13,
+    "listed_count": 0,
+    "created_at": "Sun Aug 14 03:55:20 +0000 2016",
+    "favourites_count": 0,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": true,
+    "verified": false,
+    "statuses_count": 4,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_image_url_https": "https://abs.twimg.com/sticky/default_profile_images/default_profile_5_normal.png",
+    "profile_link_color": "2B7BB9",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": true,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false
+  },
+  "geo": null,
+  "coordinates": null,
+  "place": null,
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 0,
+  "favorite_count": 0,
+  "favorited": false,
+  "retweeted": false,
+  "lang": "en"
+}]

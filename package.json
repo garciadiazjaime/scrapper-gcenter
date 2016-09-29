@@ -23,6 +23,7 @@
     "body-parser": "^1.15.2",
     "convict": "^1.4.0",
     "express": "^4.14.0",
+    "googleanalytics": "^0.3.7",
     "lodash": "^4.13.1",
     "loggly": "^1.1.0",
     "moment": "^2.14.1",

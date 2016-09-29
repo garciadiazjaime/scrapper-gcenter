@@ -43,4 +43,15 @@ export default class PeopleModel {
       }
     });
   }
+
+  static getReport(data) {
+    return new Promise((resolve) => {
+      const filter = {
+        city: data,
+      };
+      MongoUtil.find('userReport', filter)
+        .then(results => resolve(results))
+        .catch((e) => resolve({ status: e }));
+    });
+  }
 }

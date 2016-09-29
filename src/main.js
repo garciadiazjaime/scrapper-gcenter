@@ -20,7 +20,7 @@ function startRequest(port) {
 
         const portData = PortModel.extractData(jsonData, port.id);
 
-        const data = QueryUtil.saveReport(portData, port.name);
+        const data = QueryUtil.saveReport(portData, port.city, port.name);
 
         const results = yield MongoUtil.saveReport(data);
 

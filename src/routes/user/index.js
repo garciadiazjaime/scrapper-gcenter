@@ -28,6 +28,25 @@ export default (app) => {
   app.get('/user/report', (req, res) => {
     const city = req.param('city');
     if (city) {
+      PeopleModel.getReport(city)
+        .then((results) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.send(results);
+        }, (error) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.send(error);
+        })
+        .catch((error) => {
+          res.status(200).send(error);
+        });
+    } else {
+      res.send(':(');
+    }
+  });
+
+  app.get('/user/twitter/report', (req, res) => {
+    const city = req.param('city');
+    if (city) {
       const twitterUtil = new TwitterUtil();
       twitterUtil.getTweets('garita_center')
         .then((results) => {
