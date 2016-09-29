@@ -1,6 +1,6 @@
 {
   "name": "scrapper-gcenter",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "private": true,
   "main": "start.js",
@@ -13,7 +13,9 @@
     "webpack-cron": "webpack --progress --colors --watch --config webpack.config.cron.js",
     "dev": "nodemon build/server.js",
     "cron": "node build/main.js",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint .",
+    "update": "git checkout master && git pull origin develop",
+    "deploy": "git add . && git commit -m 'deploy' && git push upstream HEAD:master"
   },
   "keywords": [],
   "author": "garciadiazjaime@gmail.com",
