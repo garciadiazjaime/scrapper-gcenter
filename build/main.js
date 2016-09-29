@@ -109,7 +109,7 @@ module.exports =
 	            case 7:
 	              jsonData = _context.sent;
 	              portData = _portModel2.default.extractData(jsonData, port.id);
-	              data = _queryUtil2.default.saveReport(portData, port.name);
+	              data = _queryUtil2.default.saveReport(portData, port.city, port.name);
 	              _context.next = 12;
 	              return _mongoUtil2.default.saveReport(data);
 
@@ -502,19 +502,24 @@ module.exports =
 
 /***/ },
 /* 9 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
+
+
+	var _mongoUtil = __webpack_require__(10);
+
+	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* eslint max-len: [2, 500, 4] */
 
 	var PeopleModel = function () {
 	  function PeopleModel() {
@@ -522,7 +527,7 @@ module.exports =
 	  }
 
 	  _createClass(PeopleModel, null, [{
-	    key: "extractData",
+	    key: 'extractData',
 	    value: function extractData(data) {
 	      var peopleData = data && data.pedestrian_lanes ? data.pedestrian_lanes.pop() : null;
 	      return peopleData && peopleData.standard_lanes && peopleData.ready_lanes ? {
@@ -531,7 +536,7 @@ module.exports =
 	      } : {};
 	    }
 	  }, {
-	    key: "formatData",
+	    key: 'formatData',
 	    value: function formatData(normal, ready) {
 	      return normal && normal.delay_minutes && normal.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
 	        normal: {
@@ -543,6 +548,39 @@ module.exports =
 	          lanes: ready.lanes_open.pop()
 	        }
 	      } : null;
+	    }
+	  }, {
+	    key: 'saveReport',
+	    value: function saveReport(data) {
+	      return new Promise(function (resolve, reject) {
+	        if (data.port && data.place && data.time) {
+	          _mongoUtil2.default.saveData('userReport', data).then(function (results) {
+	            if (results.result && results.result.ok && results.result.ok === 1) {
+	              resolve({ status: true });
+	            } else {
+	              reject({ status: false });
+	            }
+	          }).catch(function () {
+	            resolve({ status: false });
+	          });
+	        } else {
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'getReport',
+	    value: function getReport(data) {
+	      return new Promise(function (resolve) {
+	        var filter = {
+	          city: data
+	        };
+	        _mongoUtil2.default.find('userReport', filter).then(function (results) {
+	          return resolve(results);
+	        }).catch(function (e) {
+	          return resolve({ status: e });
+	        });
+	      });
 	    }
 	  }]);
 
@@ -621,7 +659,7 @@ module.exports =
 	        _this2.openConnection().then(function (db) {
 	          var collection = db.collection('report');
 	          var options = {
-	            "sort": "-created"
+	            sort: [['created', 'desc']]
 	          };
 	          collection.findOne({ garita: data.name }, options, function (error, document) {
 	            if (error) {
@@ -633,6 +671,46 @@ module.exports =
 	          });
 	        }).catch(function (error) {
 	          reject(error);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'saveData',
+	    value: function saveData(collectionName, data) {
+	      var _this3 = this;
+
+	      data.created = new Date();
+	      return new Promise(function (resolve, reject) {
+	        _this3.openConnection().then(function (db) {
+	          var collection = db.collection(collectionName);
+	          collection.insert(data, function (error, results) {
+	            if (error) {
+	              reject(error);
+	            } else {
+	              resolve(results);
+	            }
+	            _this3.closeConnection(db);
+	          });
+	        }).catch(function (error) {
+	          reject(error);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'find',
+	    value: function find(collectionName, filter, options, skip, limit) {
+	      var _this4 = this;
+
+	      return new Promise(function (resolve, reject) {
+	        _this4.openConnection().then(function (db) {
+	          var collection = db.collection(collectionName);
+	          collection.find(filter || {}, options || {}).skip(skip || 0).limit(limit || 0).toArray(function (err, documents) {
+	            if (err) {
+	              reject(err);
+	            } else {
+	              resolve(documents);
+	            }
+	          });
 	        });
 	      });
 	    }
@@ -678,7 +756,7 @@ module.exports =
 	    default: 'development',
 	    env: 'NODE_ENV'
 	  },
-	  ip: {
+	  ipaddress: {
 	    doc: 'The IP address to bind.',
 	    format: 'ipaddress',
 	    default: '127.0.0.1',
@@ -687,7 +765,7 @@ module.exports =
 	  port: {
 	    doc: 'The port to bind.',
 	    format: 'port',
-	    default: 3030,
+	    default: 3000,
 	    env: 'PORT'
 	  },
 	  api: {
@@ -751,6 +829,50 @@ module.exports =
 	    format: String,
 	    default: '',
 	    env: 'MINT_TOKEN'
+	  },
+	  twitter: {
+	    key: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_KEY'
+	    },
+	    secret: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_SECRET'
+	    },
+	    tokenKey: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_TOKEN_KEY'
+	    },
+	    tokenSecret: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_TOKEN_SECRET'
+	    },
+	    maxRequests: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_REQUEST'
+	    },
+	    maxTime: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_TIME'
+	    },
+	    maxTweets: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_TWEETS'
+	    }
 	  }
 	});
 
@@ -782,6 +904,10 @@ module.exports =
 	  id: '250601',
 	  name: 'OTAY',
 	  city: 'TIJUANA'
+	}, {
+	  id: '250407',
+	  name: 'PEDWEST',
+	  city: 'TIJUANA'
 	}];
 
 /***/ },
@@ -811,8 +937,9 @@ module.exports =
 
 	  _createClass(QueryUtil, null, [{
 	    key: 'saveReport',
-	    value: function saveReport(data, garita) {
-	      return _lodash2.default.isArray(data) && data.length && garita && garita.length ? {
+	    value: function saveReport(data, city, garita) {
+	      return _lodash2.default.isArray(data) && data.length && city && city.length && garita && garita.length ? {
+	        city: city,
 	        garita: garita,
 	        content: data[0],
 	        created: new Date()

@@ -79,6 +79,25 @@ export default class MongoUtil {
     });
   }
 
+  static find(collectionName, filter, options, skip, limit) {
+    return new Promise((resolve, reject) => {
+      this.openConnection()
+        .then((db) => {
+          const collection = db.collection(collectionName);
+          collection.find(filter || {}, options || {})
+            .skip(skip || 0)
+            .limit(limit || 0)
+            .toArray((err, documents) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(documents);
+              }
+          });
+        });
+    });
+  }
+
   static closeConnection(db) {
     db.close();
   }
