@@ -722,7 +722,12 @@ module.exports =
 	        var filter = {
 	          city: data
 	        };
-	        _mongoUtil2.default.find('userReport', filter).then(function (results) {
+	        var options = {
+	          sort: [['created', 'desc']]
+	        };
+	        var skip = null;
+	        var limit = 25;
+	        _mongoUtil2.default.find('userReport', filter, options, skip, limit).then(function (results) {
 	          return resolve(results);
 	        }).catch(function (e) {
 	          return resolve({ status: e });
