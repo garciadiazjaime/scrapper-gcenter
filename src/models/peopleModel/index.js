@@ -49,7 +49,12 @@ export default class PeopleModel {
       const filter = {
         city: data,
       };
-      MongoUtil.find('userReport', filter)
+      const options = {
+        sort: [['created', 'desc']],
+      };
+      const skip = null;
+      const limit = 25;
+      MongoUtil.find('userReport', filter, options, skip, limit)
         .then(results => resolve(results))
         .catch((e) => resolve({ status: e }));
     });
