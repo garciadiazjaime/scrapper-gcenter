@@ -17,7 +17,7 @@ const config = convict({
   port: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 3030,
+    default: 3000,
     env: 'PORT',
   },
   api: {
@@ -81,6 +81,50 @@ const config = convict({
     format: String,
     default: '',
     env: 'MINT_TOKEN',
+  },
+  twitter: {
+    key: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_KEY',
+    },
+    secret: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_SECRET',
+    },
+    tokenKey: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_TOKEN_KEY',
+    },
+    tokenSecret: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_TOKEN_SECRET',
+    },
+    maxRequests: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_REQUEST',
+    },
+    maxTime: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_TIME',
+    },
+    maxTweets: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'TWITTER_MAX_TWEETS',
+    },
   },
 });
 

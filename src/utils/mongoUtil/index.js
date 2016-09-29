@@ -58,6 +58,46 @@ export default class MongoUtil {
     });
   }
 
+  static saveData(collectionName, data) {
+    data.created = new Date();
+    return new Promise((resolve, reject) => {
+      this.openConnection()
+        .then((db) => {
+          const collection = db.collection(collectionName);
+          collection.insert(data, (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
+            }
+            this.closeConnection(db);
+          });
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  static find(collectionName, filter, options, skip, limit) {
+    return new Promise((resolve, reject) => {
+      this.openConnection()
+        .then((db) => {
+          const collection = db.collection(collectionName);
+          collection.find(filter || {}, options || {})
+            .skip(skip || 0)
+            .limit(limit || 0)
+            .toArray((err, documents) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(documents);
+              }
+          });
+        });
+    });
+  }
+
   static closeConnection(db) {
     db.close();
   }

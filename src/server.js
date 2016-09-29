@@ -1,9 +1,10 @@
+/* eslint max-len: [2, 500, 4] */
 import newrelic from 'newrelic';
 import express from 'express';
-import cors from 'cors';
 
 import bodyParser from 'body-parser';
 import stubsRoutes from './routes/stubs';
+import userRoutes from './routes/user';
 import PortModel from './models/portModel';
 import config from './config';
 
@@ -15,6 +16,7 @@ app.use(bodyParser.urlencoded({
 app.locals.newrelic = newrelic;
 
 stubsRoutes(app);
+userRoutes(app);
 
 app.get('/report', (req, res) => {
   const city = req.param('city');
@@ -29,22 +31,13 @@ app.get('/report', (req, res) => {
   }
 });
 
-app.post('/user/report', cors(), (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  console.log('here', req.body);
-  console.log(req);
-  res.send(true);
-});
-
 app.get('/health', (req, res) => {
   res.writeHead(200);
   res.end();
 });
 
 app.get('*', (req, res) => {
-  res.writeHead(200);
-  res.write(':)');
-  res.end();
+  res.send(':)');
 });
 
 app.set('ipaddress', config.get('ipaddress'));

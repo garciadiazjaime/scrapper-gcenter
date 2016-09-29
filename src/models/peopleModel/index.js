@@ -1,4 +1,5 @@
 /* eslint max-len: [2, 500, 4] */
+import MongoUtil from '../../utils/mongoUtil';
 
 export default class PeopleModel {
 
@@ -21,5 +22,36 @@ export default class PeopleModel {
         lanes: ready.lanes_open.pop(),
       },
     } : null;
+  }
+
+  static saveReport(data) {
+    return new Promise((resolve, reject) => {
+      if (data.port && data.place && data.time) {
+        MongoUtil.saveData('userReport', data)
+          .then((results) => {
+            if (results.result && results.result.ok && results.result.ok === 1) {
+              resolve({ status: true });
+            } else {
+              reject({ status: false });
+            }
+          })
+          .catch(() => {
+            resolve({ status: false });
+          });
+      } else {
+        reject({ status: false });
+      }
+    });
+  }
+
+  static getReport(data) {
+    return new Promise((resolve) => {
+      const filter = {
+        city: data,
+      };
+      MongoUtil.find('userReport', filter)
+        .then(results => resolve(results))
+        .catch((e) => resolve({ status: e }));
+    });
   }
 }
