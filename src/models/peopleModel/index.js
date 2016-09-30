@@ -47,14 +47,13 @@ export default class PeopleModel {
   static getReport(data) {
     return new Promise((resolve) => {
       const d = new Date();
-      const today = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()}`;
+      const today = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} 01:00`;
       const filter = {
         city: data,
         created: {
-          $gte: new Date(today).toJSON(),
+          $gte: new Date(new Date(today).toJSON()),
         },
       };
-      console.log('filter', filter);
       const options = {
         sort: [['created', 'desc']],
       };

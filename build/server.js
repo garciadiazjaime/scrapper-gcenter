@@ -727,7 +727,6 @@ module.exports =
 	            $gte: new Date(new Date(today).toJSON())
 	          }
 	        };
-	        console.log('filter', filter);
 	        var options = {
 	          sort: [['created', 'desc']]
 	        };
