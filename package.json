@@ -1,6 +1,6 @@
 {
   "name": "scrapper-gcenter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Garitacenter api/scripts",
   "private": true,
   "main": "start.js",

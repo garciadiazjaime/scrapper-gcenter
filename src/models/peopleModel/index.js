@@ -54,6 +54,7 @@ export default class PeopleModel {
           $gte: new Date(today).toJSON(),
         },
       };
+      console.log('filter', filter);
       const options = {
         sort: [['created', 'desc']],
       };
