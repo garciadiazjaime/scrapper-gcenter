@@ -46,14 +46,19 @@ export default class PeopleModel {
 
   static getReport(data) {
     return new Promise((resolve) => {
+      const d = new Date();
+      const today = `${d.getFullYear()}/${d.getMonth()}/${d.getDate()}`;
       const filter = {
         city: data,
+        created: {
+          $gte: new Date(today).toJSON(),
+        },
       };
       const options = {
         sort: [['created', 'desc']],
       };
       const skip = null;
-      const limit = 25;
+      const limit = 50;
       MongoUtil.find('userReport', filter, options, skip, limit)
         .then(results => resolve(results))
         .catch((e) => resolve({ status: e }));
