@@ -720,7 +720,7 @@ module.exports =
 	    value: function getReport(data) {
 	      return new Promise(function (resolve) {
 	        var d = new Date();
-	        var today = d.getFullYear() + '/' + d.getMonth() + '/' + d.getDate();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
 	        var filter = {
 	          city: data,
 	          created: {
