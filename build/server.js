@@ -719,14 +719,19 @@ module.exports =
 	    key: 'getReport',
 	    value: function getReport(data) {
 	      return new Promise(function (resolve) {
+	        var d = new Date();
+	        var today = d.getFullYear() + '/' + d.getMonth() + '/' + d.getDate();
 	        var filter = {
-	          city: data
+	          city: data,
+	          created: {
+	            $gte: new Date(today).toJSON()
+	          }
 	        };
 	        var options = {
 	          sort: [['created', 'desc']]
 	        };
 	        var skip = null;
-	        var limit = 25;
+	        var limit = 50;
 	        _mongoUtil2.default.find('userReport', filter, options, skip, limit).then(function (results) {
 	          return resolve(results);
 	        }).catch(function (e) {
