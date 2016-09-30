@@ -720,11 +720,11 @@ module.exports =
 	    value: function getReport(data) {
 	      return new Promise(function (resolve) {
 	        var d = new Date();
-	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
 	        var filter = {
 	          city: data,
 	          created: {
-	            $gte: new Date(today).toJSON()
+	            $gte: new Date(new Date(today).toJSON())
 	          }
 	        };
 	        console.log('filter', filter);
