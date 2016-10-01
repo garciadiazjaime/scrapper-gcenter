@@ -21,12 +21,13 @@ export default class MongoUtil {
         .then((db) => {
           const collection = db.collection('report');
           collection.insert(data, (error, results) => {
+            console.log('error, results', error, results);
             if (error) {
               reject(error);
             } else {
               resolve(results);
             }
-            this.closeConnection(db);
+            // this.closeConnection(db);
           });
         })
         .catch((error) => {
@@ -71,7 +72,7 @@ export default class MongoUtil {
             } else {
               resolve(results);
             }
-            this.closeConnection(db);
+            // this.closeConnection(db);
           });
         })
         .catch((error) => {

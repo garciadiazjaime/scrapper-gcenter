@@ -796,12 +796,13 @@ module.exports =
 	        _this.openConnection().then(function (db) {
 	          var collection = db.collection('report');
 	          collection.insert(data, function (error, results) {
+	            console.log('error, results', error, results);
 	            if (error) {
 	              reject(error);
 	            } else {
 	              resolve(results);
 	            }
-	            _this.closeConnection(db);
+	            // this.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
@@ -848,7 +849,7 @@ module.exports =
 	            } else {
 	              resolve(results);
 	            }
-	            _this3.closeConnection(db);
+	            // this.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
