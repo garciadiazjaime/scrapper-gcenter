@@ -542,7 +542,7 @@ module.exports =
 	      doc: 'Database hostname',
 	      format: String,
 	      default: 'mongodb://localhost:27017/gcenter',
-	      env: 'OPENSHIFT_MONGODB_DB_URL'
+	      env: 'DB_URL'
 	    }
 	  },
 	  loggly: {
