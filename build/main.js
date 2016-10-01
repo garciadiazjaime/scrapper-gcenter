@@ -573,11 +573,11 @@ module.exports =
 	    value: function getReport(data) {
 	      return new Promise(function (resolve) {
 	        var d = new Date();
-	        var today = d.getFullYear() + '/' + d.getMonth() + '/' + d.getDate();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
 	        var filter = {
 	          city: data,
 	          created: {
-	            $gte: new Date(today).toJSON()
+	            $gte: new Date(new Date(today).toJSON())
 	          }
 	        };
 	        var options = {
@@ -791,7 +791,7 @@ module.exports =
 	      doc: 'Database hostname',
 	      format: String,
 	      default: 'mongodb://localhost:27017/gcenter',
-	      env: 'DB_URL'
+	      env: 'OPENSHIFT_MONGODB_DB_URL'
 	    }
 	  },
 	  loggly: {
