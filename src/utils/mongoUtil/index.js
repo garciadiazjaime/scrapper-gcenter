@@ -26,7 +26,7 @@ export default class MongoUtil {
             } else {
               resolve(results);
             }
-            // this.closeConnection(db);
+            this.closeConnection(db);
           });
         })
         .catch((error) => {
@@ -49,7 +49,7 @@ export default class MongoUtil {
             } else {
               resolve(document);
             }
-            // this.closeConnection(db);
+            this.closeConnection(db);
           });
         })
         .catch((error) => {
@@ -70,7 +70,7 @@ export default class MongoUtil {
             } else {
               resolve(results);
             }
-            // this.closeConnection(db);
+            this.closeConnection(db);
           });
         })
         .catch((error) => {

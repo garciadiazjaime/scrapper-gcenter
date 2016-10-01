@@ -653,7 +653,7 @@ module.exports =
 	            } else {
 	              resolve(results);
 	            }
-	            // this.closeConnection(db);
+	            _this.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
@@ -677,7 +677,7 @@ module.exports =
 	            } else {
 	              resolve(document);
 	            }
-	            // this.closeConnection(db);
+	            _this2.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
@@ -699,7 +699,7 @@ module.exports =
 	            } else {
 	              resolve(results);
 	            }
-	            // this.closeConnection(db);
+	            _this3.closeConnection(db);
 	          });
 	        }).catch(function (error) {
 	          reject(error);
