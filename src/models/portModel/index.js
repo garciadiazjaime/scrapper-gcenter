@@ -10,11 +10,9 @@ import portsData from '../../constants/ports.js';
 export default class PortModel {
 
   static getReport(city) {
-    console.log('PortModel::getReport', city);
     return new Promise((resolve, reject) => {
       let promises = [];
       const ports = this.getCityPorts(portsData, city);
-      console.log('ports', ports);
       promises = ports.map(port => MongoUtil.getReport(port));
       Promise.all(promises)
         .then((results) => {

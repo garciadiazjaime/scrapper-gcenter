@@ -90,7 +90,6 @@ module.exports =
 
 	app.get('/report', function (req, res) {
 	  var city = req.param('city');
-	  console.log('/report', city);
 	  if (city) {
 	    _portModel2.default.getReport(city).then(function (data) {
 	      res.setHeader('Content-Type', 'application/json');
@@ -796,7 +795,6 @@ module.exports =
 	        _this.openConnection().then(function (db) {
 	          var collection = db.collection('report');
 	          collection.insert(data, function (error, results) {
-	            console.log('error, results', error, results);
 	            if (error) {
 	              reject(error);
 	            } else {
@@ -821,7 +819,6 @@ module.exports =
 	            sort: [['created', 'desc']]
 	          };
 	          collection.findOne({ garita: data.name }, options, function (error, document) {
-	            console.log('error, document', error, document);
 	            if (error) {
 	              reject(error);
 	            } else {
@@ -939,11 +936,9 @@ module.exports =
 	    value: function getReport(city) {
 	      var _this = this;
 
-	      console.log('PortModel::getReport', city);
 	      return new Promise(function (resolve, reject) {
 	        var promises = [];
 	        var ports = _this.getCityPorts(_ports2.default, city);
-	        console.log('ports', ports);
 	        promises = ports.map(function (port) {
 	          return _mongoUtil2.default.getReport(port);
 	        });

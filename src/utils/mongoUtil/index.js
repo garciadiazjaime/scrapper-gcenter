@@ -21,7 +21,6 @@ export default class MongoUtil {
         .then((db) => {
           const collection = db.collection('report');
           collection.insert(data, (error, results) => {
-            console.log('error, results', error, results);
             if (error) {
               reject(error);
             } else {
@@ -45,7 +44,6 @@ export default class MongoUtil {
               sort: [['created', 'desc']]
           }
           collection.findOne({garita: data.name}, options, (error, document) => {
-            console.log('error, document', error, document);
             if (error) {
               reject(error);
             } else {

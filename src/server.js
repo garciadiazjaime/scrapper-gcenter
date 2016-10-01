@@ -20,7 +20,6 @@ userRoutes(app);
 
 app.get('/report', (req, res) => {
   const city = req.param('city');
-  console.log('/report', city);
   if (city) {
     PortModel.getReport(city)
       .then((data) => {
