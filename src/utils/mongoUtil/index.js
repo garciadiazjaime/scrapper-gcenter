@@ -44,12 +44,13 @@ export default class MongoUtil {
               sort: [['created', 'desc']]
           }
           collection.findOne({garita: data.name}, options, (error, document) => {
+            console.log('error, document', error, document);
             if (error) {
               reject(error);
             } else {
               resolve(document);
             }
-            this.closeConnection(db);
+            // this.closeConnection(db);
           });
         })
         .catch((error) => {

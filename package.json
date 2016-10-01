@@ -3,7 +3,7 @@
   "version": "2.0.7",
   "description": "Garitacenter api/scripts",
   "private": true,
-  "main": "start.js",
+  "main": "dist/server.js",
   "scripts": {
     "start": "node --use_strict start.js",
     "unittest": "./node_modules/.bin/mocha --compilers js:babel-core/register --recursive test",
