@@ -9,11 +9,20 @@ import portsData from '../../constants/ports.js';
 
 export default class PortModel {
 
-  static getReport(city) {
+  constructor() {
+    this.db = new MongoUtil();
+  }
+
+  getReport(city) {
     return new Promise((resolve, reject) => {
       let promises = [];
       const ports = this.getCityPorts(portsData, city);
-      promises = ports.map(port => MongoUtil.getReport(port));
+      promises = ports.map(port => {
+        const filter = {
+          garita: port.name,
+        };
+        return this.db.findOne('report', filter);
+      });
       Promise.all(promises)
         .then((results) => {
           resolve(results);
@@ -24,7 +33,7 @@ export default class PortModel {
     });
   }
 
-  static getCityPorts(ports, city) {
+  getCityPorts(ports, city) {
     return ports.filter(port => port.city.toUpperCase() === city.toUpperCase());
   }
 

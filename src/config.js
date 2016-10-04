@@ -24,7 +24,7 @@ const config = convict({
     url: {
       doc: 'API URL',
       format: String,
-      default: 'http://127.0.0.1:3000/ports',
+      default: 'http://127.0.0.1:3000/stub/ports',
       env: 'API_URL',
     },
   },

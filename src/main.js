@@ -10,6 +10,8 @@ import portsData from './constants/ports';
 
 import 'babel-polyfill';
 
+const mongoUtil = new MongoUtil();
+
 function startRequest(port) {
   return new Promise((resolve, reject) => {
     (runGenerator(function *() {
@@ -22,7 +24,8 @@ function startRequest(port) {
 
         const data = QueryUtil.saveReport(portData, port.city, port.name);
 
-        const results = yield MongoUtil.saveReport(data);
+        yield mongoUtil.openConnection();
+        const results = yield mongoUtil.insertOne('report', data);
 
         if (results) {
           logUtil.log(`...Garita ${port.name} updated`);
@@ -48,8 +51,10 @@ for (let i = 0, len = portsData.length; i < len; i++) {
 
 Promise.all(promises)
   .then(() => {
+    mongoUtil.closeConnection();
     logUtil.log('==== done ====');
   })
   .catch(error => {
+    mongoUtil.closeConnection();
     logUtil.log(`promise error ${error}`);
   });
