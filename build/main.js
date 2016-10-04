@@ -67,25 +67,27 @@ module.exports =
 
 	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
 
-	var _queryUtil = __webpack_require__(15);
+	var _queryUtil = __webpack_require__(18);
 
 	var _queryUtil2 = _interopRequireDefault(_queryUtil);
 
-	var _config = __webpack_require__(12);
+	var _config = __webpack_require__(14);
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _logUtil = __webpack_require__(16);
+	var _logUtil = __webpack_require__(12);
 
 	var _logUtil2 = _interopRequireDefault(_logUtil);
 
-	var _ports = __webpack_require__(14);
+	var _ports = __webpack_require__(17);
 
 	var _ports2 = _interopRequireDefault(_ports);
 
 	__webpack_require__(19);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mongoUtil = new _mongoUtil2.default();
 
 	function startRequest(port) {
 	  return new Promise(function (resolve, reject) {
@@ -98,6 +100,7 @@ module.exports =
 	              _context.prev = 0;
 
 	              _logUtil2.default.log('getting data for ' + port.name + '...');
+
 	              _context.next = 4;
 	              return _requestUtil2.default.get(_config2.default.get('api.url'));
 
@@ -111,9 +114,13 @@ module.exports =
 	              portData = _portModel2.default.extractData(jsonData, port.id);
 	              data = _queryUtil2.default.saveReport(portData, port.city, port.name);
 	              _context.next = 12;
-	              return _mongoUtil2.default.saveReport(data);
+	              return mongoUtil.openConnection();
 
 	            case 12:
+	              _context.next = 14;
+	              return mongoUtil.insertOne('report', data);
+
+	            case 14:
 	              results = _context.sent;
 
 
@@ -124,21 +131,21 @@ module.exports =
 	                _logUtil2.default.log('...Error on garita ' + port.name);
 	                reject();
 	              }
-	              _context.next = 19;
+	              _context.next = 21;
 	              break;
 
-	            case 16:
-	              _context.prev = 16;
+	            case 18:
+	              _context.prev = 18;
 	              _context.t0 = _context['catch'](0);
 
 	              _logUtil2.default.log('exception ' + _context.t0);
 
-	            case 19:
+	            case 21:
 	            case 'end':
 	              return _context.stop();
 	          }
 	        }
-	      }, _callee, this, [[0, 16]]);
+	      }, _callee, this, [[0, 18]]);
 	    }))();
 	  });
 	}
@@ -152,9 +159,13 @@ module.exports =
 	}
 
 	Promise.all(promises).then(function () {
+	  mongoUtil.closeConnection();
 	  _logUtil2.default.log('==== done ====');
+	  process.exit();
 	}).catch(function (error) {
+	  mongoUtil.closeConnection();
 	  _logUtil2.default.log('promise error ' + error);
+	  process.exit();
 	});
 
 /***/ },
@@ -345,7 +356,7 @@ module.exports =
 
 	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
 
-	var _ports = __webpack_require__(14);
+	var _ports = __webpack_require__(17);
 
 	var _ports2 = _interopRequireDefault(_ports);
 
@@ -356,9 +367,11 @@ module.exports =
 	var PortModel = function () {
 	  function PortModel() {
 	    _classCallCheck(this, PortModel);
+
+	    this.db = new _mongoUtil2.default();
 	  }
 
-	  _createClass(PortModel, null, [{
+	  _createClass(PortModel, [{
 	    key: 'getReport',
 	    value: function getReport(city) {
 	      var _this = this;
@@ -367,7 +380,10 @@ module.exports =
 	        var promises = [];
 	        var ports = _this.getCityPorts(_ports2.default, city);
 	        promises = ports.map(function (port) {
-	          return _mongoUtil2.default.getReport(port);
+	          var filter = {
+	            garita: port.name
+	          };
+	          return _this.db.findOne('report', filter);
 	        });
 	        Promise.all(promises).then(function (results) {
 	          resolve(results);
@@ -383,7 +399,7 @@ module.exports =
 	        return port.city.toUpperCase() === city.toUpperCase();
 	      });
 	    }
-	  }, {
+	  }], [{
 	    key: 'extractData',
 	    value: function extractData(data, port) {
 	      var _this2 = this;
@@ -524,9 +540,60 @@ module.exports =
 	var PeopleModel = function () {
 	  function PeopleModel() {
 	    _classCallCheck(this, PeopleModel);
+
+	    this.mongoUtil = new _mongoUtil2.default();
 	  }
 
-	  _createClass(PeopleModel, null, [{
+	  _createClass(PeopleModel, [{
+	    key: 'getReport',
+	    value: function getReport(data) {
+	      var _this = this;
+
+	      return new Promise(function (resolve) {
+	        var d = new Date();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
+	        var top = new Date(new Date(today).toJSON());
+	        console.log('top', top);
+	        var filter = {
+	          city: data,
+	          created: {
+	            $gte: top
+	          }
+	        };
+	        var options = {
+	          sort: [['created', 'desc']]
+	        };
+	        var skip = null;
+	        var limit = 50;
+	        _this.mongoUtil.find('userReport', filter, options, skip, limit).then(function (results) {
+	          return resolve(results);
+	        }).catch(function (e) {
+	          return resolve({ status: false, message: e });
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'saveReport',
+	    value: function saveReport(data) {
+	      var _this2 = this;
+
+	      return new Promise(function (resolve, reject) {
+	        if (data.port && data.place && data.time) {
+	          _this2.mongoUtil.insertOne('userReport', data).then(function (results) {
+	            if (results.ok && results.n === 1) {
+	              resolve({ status: true });
+	            } else {
+	              reject({ status: false });
+	            }
+	          }).catch(function () {
+	            resolve({ status: false });
+	          });
+	        } else {
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }], [{
 	    key: 'extractData',
 	    value: function extractData(data) {
 	      var peopleData = data && data.pedestrian_lanes ? data.pedestrian_lanes.pop() : null;
@@ -549,49 +616,6 @@ module.exports =
 	        }
 	      } : null;
 	    }
-	  }, {
-	    key: 'saveReport',
-	    value: function saveReport(data) {
-	      return new Promise(function (resolve, reject) {
-	        if (data.port && data.place && data.time) {
-	          _mongoUtil2.default.saveData('userReport', data).then(function (results) {
-	            if (results.result && results.result.ok && results.result.ok === 1) {
-	              resolve({ status: true });
-	            } else {
-	              reject({ status: false });
-	            }
-	          }).catch(function () {
-	            resolve({ status: false });
-	          });
-	        } else {
-	          reject({ status: false });
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'getReport',
-	    value: function getReport(data) {
-	      return new Promise(function (resolve) {
-	        var d = new Date();
-	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
-	        var filter = {
-	          city: data,
-	          created: {
-	            $gte: new Date(new Date(today).toJSON())
-	          }
-	        };
-	        var options = {
-	          sort: [['created', 'desc']]
-	        };
-	        var skip = null;
-	        var limit = 50;
-	        _mongoUtil2.default.find('userReport', filter, options, skip, limit).then(function (results) {
-	          return resolve(results);
-	        }).catch(function (e) {
-	          return resolve({ status: e });
-	        });
-	      });
-	    }
 	  }]);
 
 	  return PeopleModel;
@@ -613,7 +637,11 @@ module.exports =
 
 	var _mongodb = __webpack_require__(11);
 
-	var _config = __webpack_require__(12);
+	var _logUtil = __webpack_require__(12);
+
+	var _logUtil2 = _interopRequireDefault(_logUtil);
+
+	var _config = __webpack_require__(14);
 
 	var _config2 = _interopRequireDefault(_config);
 
@@ -621,99 +649,76 @@ module.exports =
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	var dbClient = void 0;
+
 	var MongoUtil = function () {
 	  function MongoUtil() {
 	    _classCallCheck(this, MongoUtil);
 	  }
 
-	  _createClass(MongoUtil, null, [{
+	  _createClass(MongoUtil, [{
 	    key: 'openConnection',
 	    value: function openConnection() {
 	      return new Promise(function (resolve, reject) {
-	        _mongodb.MongoClient.connect(_config2.default.get('db.url'), function (error, db) {
-	          if (error) {
-	            reject(error);
-	          } else {
-	            resolve(db);
-	          }
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'saveReport',
-	    value: function saveReport(data) {
-	      var _this = this;
-
-	      return new Promise(function (resolve, reject) {
-	        _this.openConnection().then(function (db) {
-	          var collection = db.collection('report');
-	          collection.insert(data, function (error, results) {
-	            if (error) {
-	              reject(error);
+	        if (!dbClient) {
+	          _mongodb.MongoClient.connect(_config2.default.get('db.url'), function (err, db) {
+	            if (err) {
+	              reject(err);
 	            } else {
-	              resolve(results);
+	              dbClient = db;
+	              resolve();
 	            }
-	            _this.closeConnection(db);
 	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
+	        } else {
+	          resolve();
+	        }
 	      });
 	    }
 	  }, {
-	    key: 'getReport',
-	    value: function getReport(data) {
-	      var _this2 = this;
-
+	    key: 'insertOne',
+	    value: function insertOne(collectionName, data) {
 	      return new Promise(function (resolve, reject) {
-	        _this2.openConnection().then(function (db) {
-	          var collection = db.collection('report');
-	          var options = {
-	            sort: [['created', 'desc']]
-	          };
-	          collection.findOne({ garita: data.name }, options, function (error, document) {
-	            if (error) {
-	              reject(error);
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
+	          collection.insertOne(data, function (err, result) {
+	            if (err) {
+	              _logUtil2.default.log('Error insertOne ' + err);
+	              reject({ status: false });
+	            } else {
+	              resolve(result.result);
+	            }
+	          });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'findOne',
+	    value: function findOne(collectionName, filter, options) {
+	      return new Promise(function (resolve, reject) {
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
+	          collection.findOne(filter, options, function (err, document) {
+	            if (err) {
+	              reject(err);
 	            } else {
 	              resolve(document);
 	            }
-	            _this2.closeConnection(db);
 	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'saveData',
-	    value: function saveData(collectionName, data) {
-	      var _this3 = this;
-
-	      data.created = new Date();
-	      return new Promise(function (resolve, reject) {
-	        _this3.openConnection().then(function (db) {
-	          var collection = db.collection(collectionName);
-	          collection.insert(data, function (error, results) {
-	            if (error) {
-	              reject(error);
-	            } else {
-	              resolve(results);
-	            }
-	            _this3.closeConnection(db);
-	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
 	      });
 	    }
 	  }, {
 	    key: 'find',
 	    value: function find(collectionName, filter, options, skip, limit) {
-	      var _this4 = this;
-
 	      return new Promise(function (resolve, reject) {
-	        _this4.openConnection().then(function (db) {
-	          var collection = db.collection(collectionName);
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
 	          collection.find(filter || {}, options || {}).skip(skip || 0).limit(limit || 0).toArray(function (err, documents) {
 	            if (err) {
 	              reject(err);
@@ -721,13 +726,16 @@ module.exports =
 	              resolve(documents);
 	            }
 	          });
-	        });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
 	      });
 	    }
 	  }, {
 	    key: 'closeConnection',
-	    value: function closeConnection(db) {
-	      db.close();
+	    value: function closeConnection() {
+	      dbClient.close();
 	    }
 	  }]);
 
@@ -752,7 +760,73 @@ module.exports =
 	  value: true
 	});
 
-	var _convict = __webpack_require__(13);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _loggly = __webpack_require__(13);
+
+	var _loggly2 = _interopRequireDefault(_loggly);
+
+	var _config = __webpack_require__(14);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _guidUtil = __webpack_require__(16);
+
+	var _guidUtil2 = _interopRequireDefault(_guidUtil);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var logglyClient = _loggly2.default.createClient({
+	  token: _config2.default.get('loggly.token'),
+	  subdomain: _config2.default.get('loggly.subdomain'),
+	  auth: {
+	    username: _config2.default.get('loggly.username'),
+	    password: _config2.default.get('loggly.password')
+	  },
+	  tags: ['scrapper-gcenter']
+	});
+
+	var guid = _guidUtil2.default.generate();
+
+	var LogUtil = function () {
+	  function LogUtil() {
+	    _classCallCheck(this, LogUtil);
+	  }
+
+	  _createClass(LogUtil, null, [{
+	    key: 'log',
+	    value: function log(data) {
+	      var date = new Date().toJSON();
+	      var message = date + ' :: ' + guid + ' :: ' + data;
+	      logglyClient.log(message);
+	      console.log(message);
+	    }
+	  }]);
+
+	  return LogUtil;
+	}();
+
+	exports.default = LogUtil;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = require("loggly");
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _convict = __webpack_require__(15);
 
 	var _convict2 = _interopRequireDefault(_convict);
 
@@ -782,7 +856,7 @@ module.exports =
 	    url: {
 	      doc: 'API URL',
 	      format: String,
-	      default: 'http://127.0.0.1:3000/ports',
+	      default: 'http://127.0.0.1:3000/stub/ports',
 	      env: 'API_URL'
 	    }
 	  },
@@ -892,13 +966,51 @@ module.exports =
 	exports.default = config;
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = require("convict");
 
 /***/ },
-/* 14 */
+/* 16 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/* eslint max-len: [2, 500, 4] */
+
+	var GuidUtil = function () {
+	  function GuidUtil() {
+	    _classCallCheck(this, GuidUtil);
+	  }
+
+	  _createClass(GuidUtil, null, [{
+	    key: "generate",
+	    value: function generate() {
+	      return "" + this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
+	    }
+	  }, {
+	    key: "s4",
+	    value: function s4() {
+	      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	    }
+	  }]);
+
+	  return GuidUtil;
+	}();
+
+	exports.default = GuidUtil;
+
+/***/ },
+/* 17 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -921,7 +1033,7 @@ module.exports =
 	}];
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -961,110 +1073,6 @@ module.exports =
 	}();
 
 	exports.default = QueryUtil;
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _loggly = __webpack_require__(17);
-
-	var _loggly2 = _interopRequireDefault(_loggly);
-
-	var _config = __webpack_require__(12);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _guidUtil = __webpack_require__(18);
-
-	var _guidUtil2 = _interopRequireDefault(_guidUtil);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var logglyClient = _loggly2.default.createClient({
-	  token: _config2.default.get('loggly.token'),
-	  subdomain: _config2.default.get('loggly.subdomain'),
-	  auth: {
-	    username: _config2.default.get('loggly.username'),
-	    password: _config2.default.get('loggly.password')
-	  },
-	  tags: ['scrapper-gcenter']
-	});
-
-	var guid = _guidUtil2.default.generate();
-
-	var LogUtil = function () {
-	  function LogUtil() {
-	    _classCallCheck(this, LogUtil);
-	  }
-
-	  _createClass(LogUtil, null, [{
-	    key: 'log',
-	    value: function log(data) {
-	      var date = new Date().toJSON();
-	      var message = date + ' :: ' + guid + ' :: ' + data;
-	      logglyClient.log(message);
-	      console.log(message);
-	    }
-	  }]);
-
-	  return LogUtil;
-	}();
-
-	exports.default = LogUtil;
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	module.exports = require("loggly");
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* eslint max-len: [2, 500, 4] */
-
-	var GuidUtil = function () {
-	  function GuidUtil() {
-	    _classCallCheck(this, GuidUtil);
-	  }
-
-	  _createClass(GuidUtil, null, [{
-	    key: "generate",
-	    value: function generate() {
-	      return "" + this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
-	    }
-	  }, {
-	    key: "s4",
-	    value: function s4() {
-	      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-	    }
-	  }]);
-
-	  return GuidUtil;
-	}();
-
-	exports.default = GuidUtil;
 
 /***/ },
 /* 19 */
