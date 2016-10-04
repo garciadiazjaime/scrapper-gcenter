@@ -106,8 +106,7 @@ module.exports =
 	});
 
 	app.get('*', function (req, res) {
-	  res.writeHead(200);
-	  res.write(':)');
+	  res.send(':)');
 	});
 
 	app.set('ipaddress', _config2.default.get('ipaddress'));
@@ -521,13 +520,13 @@ module.exports =
 	    doc: 'The IP address to bind.',
 	    format: 'ipaddress',
 	    default: '127.0.0.1',
-	    env: 'IP_ADDRESS'
+	    env: 'OPENSHIFT_NODEJS_IP'
 	  },
 	  port: {
 	    doc: 'The port to bind.',
 	    format: 'port',
 	    default: 3000,
-	    env: 'PORT'
+	    env: 'OPENSHIFT_NODEJS_PORT'
 	  },
 	  api: {
 	    url: {
@@ -720,10 +719,20 @@ module.exports =
 	    key: 'getReport',
 	    value: function getReport(data) {
 	      return new Promise(function (resolve) {
+	        var d = new Date();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
 	        var filter = {
-	          city: data
+	          city: data,
+	          created: {
+	            $gte: new Date(new Date(today).toJSON())
+	          }
 	        };
-	        _mongoUtil2.default.find('userReport', filter).then(function (results) {
+	        var options = {
+	          sort: [['created', 'desc']]
+	        };
+	        var skip = null;
+	        var limit = 50;
+	        _mongoUtil2.default.find('userReport', filter, options, skip, limit).then(function (results) {
 	          return resolve(results);
 	        }).catch(function (e) {
 	          return resolve({ status: e });
