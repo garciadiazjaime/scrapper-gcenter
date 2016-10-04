@@ -35,3 +35,6 @@ rhc env list -a app
 
 Code to increase jslint max line length limit
 /* eslint max-len: [2, 500, 4] */
+
+Check the current number of connections to MongoDb
+db.serverStatus().connections

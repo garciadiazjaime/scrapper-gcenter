@@ -59,66 +59,66 @@ module.exports =
 
 	var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
-	var _stubs = __webpack_require__(4);
+	var _reportRoutes = __webpack_require__(4);
 
-	var _stubs2 = _interopRequireDefault(_stubs);
+	var _reportRoutes2 = _interopRequireDefault(_reportRoutes);
 
-	var _user = __webpack_require__(6);
+	var _userRoutes = __webpack_require__(17);
 
-	var _user2 = _interopRequireDefault(_user);
+	var _userRoutes2 = _interopRequireDefault(_userRoutes);
 
-	var _portModel = __webpack_require__(17);
+	var _stubRoutes = __webpack_require__(22);
 
-	var _portModel2 = _interopRequireDefault(_portModel);
+	var _stubRoutes2 = _interopRequireDefault(_stubRoutes);
 
-	var _config = __webpack_require__(12);
+	var _mongoUtil = __webpack_require__(9);
+
+	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+
+	var _config = __webpack_require__(13);
 
 	var _config2 = _interopRequireDefault(_config);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var app = (0, _express2.default)(); /* eslint max-len: [2, 500, 4] */
+	/* eslint max-len: [2, 500, 4] */
 
+
+	var app = (0, _express2.default)();
+	var mongoUtil = new _mongoUtil2.default();
 	app.use(_bodyParser2.default.json());
 	app.use(_bodyParser2.default.urlencoded({
 	  extended: false
 	}));
+
 	app.locals.newrelic = _newrelic2.default;
 
-	(0, _stubs2.default)(app);
-	(0, _user2.default)(app);
-
-	app.get('/report', function (req, res) {
-	  var city = req.param('city');
-	  if (city) {
-	    _portModel2.default.getReport(city).then(function (data) {
-	      res.setHeader('Content-Type', 'application/json');
-	      res.send(JSON.stringify(data));
-	    });
-	  } else {
-	    res.send(':(');
-	  }
-	});
+	app.use('/report', _reportRoutes2.default);
+	app.use('/user', _userRoutes2.default);
+	app.use('/stub', _stubRoutes2.default);
 
 	app.get('/health', function (req, res) {
 	  res.writeHead(200);
 	  res.end();
 	});
-
 	app.get('*', function (req, res) {
-	  res.send(':)');
+	  res.send('*');
 	});
 
 	app.set('ipaddress', _config2.default.get('ipaddress'));
 	app.set('port', _config2.default.get('port'));
 
-	var server = app.listen(app.get('port'), app.get('ipaddress'), function (err) {
-	  if (err) {
-	    console.log(err);
-	  }
-	  var host = server.address().address;
-	  var port = server.address().port;
-	  console.log('Example app listening at http://%s:%s', host, port);
+	mongoUtil.openConnection().then(function () {
+	  var server = app.listen(app.get('port'), app.get('ipaddress'), function (err) {
+	    if (err) {
+	      console.log(err);
+	    }
+	    var host = server.address().address;
+	    var port = server.address().port;
+	    console.log('Example app listening at http://%s:%s', host, port);
+	  });
+	}, function () {
+	  console.log('Error :: No DB connection open');
 	});
 
 /***/ },
@@ -149,58 +149,35 @@ module.exports =
 	  value: true
 	});
 
-	var _fs = __webpack_require__(5);
+	var _portModel = __webpack_require__(5);
 
-	var _fs2 = _interopRequireDefault(_fs);
+	var _portModel2 = _interopRequireDefault(_portModel);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = function (app) {
-	  app.get('/ports', function (req, res) {
-	    _fs2.default.readFile('resources/stubs/ports.xml', function (err, data) {
-	      if (!err) {
-	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
-	        res.write(data);
-	      } else {
-	        res.writeHead(404);
-	      }
-	      res.end();
-	    });
-	  });
+	var express = __webpack_require__(2);
+	/*eslint-disable */
+	var router = express.Router();
+	/*eslint-enable */
 
-	  app.get('/san-ysidro', function (req, res) {
-	    _fs2.default.readFile('resources/stubs/cbp_san_ysidro.html', function (err, data) {
-	      if (!err) {
-	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
-	        res.write(data);
-	      } else {
-	        res.writeHead(404);
-	      }
-	      res.end();
-	    });
-	  });
 
-	  app.get('/otay', function (req, res) {
-	    _fs2.default.readFile('resources/stubs/cbp_otay.html', function (err, data) {
-	      if (!err) {
-	        res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
-	        res.write(data);
-	      } else {
-	        res.writeHead(404);
-	      }
-	      res.end();
+	router.get('/', function (req, res) {
+	  var city = req.param('city');
+	  if (city) {
+	    var portModel = new _portModel2.default();
+	    portModel.getReport(city).then(function (data) {
+	      res.setHeader('Content-Type', 'application/json');
+	      res.send(JSON.stringify(data));
 	    });
-	  });
-	};
+	  } else {
+	    res.send(':(');
+	  }
+	});
+
+	exports.default = router;
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	module.exports = require("fs");
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -209,74 +186,294 @@ module.exports =
 	  value: true
 	});
 
-	var _twitterUtil = __webpack_require__(7);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
 
-	var _twitterUtil2 = _interopRequireDefault(_twitterUtil);
 
-	var _peopleModel = __webpack_require__(14);
+	var _lodash = __webpack_require__(6);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _carModel = __webpack_require__(7);
+
+	var _carModel2 = _interopRequireDefault(_carModel);
+
+	var _peopleModel = __webpack_require__(8);
 
 	var _peopleModel2 = _interopRequireDefault(_peopleModel);
 
+	var _mongoUtil = __webpack_require__(9);
+
+	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+
+	var _ports = __webpack_require__(16);
+
+	var _ports2 = _interopRequireDefault(_ports);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = function (app) {
-	  app.post('/user/report', function (req, res) {
-	    var data = req.body;
-	    _peopleModel2.default.saveReport(data).then(function (results) {
-	      var twitterUtil = new _twitterUtil2.default();
-	      var status = _twitterUtil2.default.formatStatus(data);
-	      twitterUtil.postTweet(status).then(function () {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(results);
-	      }, function (error) {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(error);
-	      }).catch(function (error) {
-	        res.status(200).send(error);
-	      });
-	    }).catch(function (error) {
-	      res.status(200).send(error);
-	    });
-	  });
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	  app.get('/user/report', function (req, res) {
-	    var city = req.param('city');
-	    if (city) {
-	      _peopleModel2.default.getReport(city).then(function (results) {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(results);
-	      }, function (error) {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(error);
-	      }).catch(function (error) {
-	        res.status(200).send(error);
-	      });
-	    } else {
-	      res.send(':(');
-	    }
-	  });
+	var PortModel = function () {
+	  function PortModel() {
+	    _classCallCheck(this, PortModel);
 
-	  app.get('/user/twitter/report', function (req, res) {
-	    var city = req.param('city');
-	    if (city) {
-	      var twitterUtil = new _twitterUtil2.default();
-	      twitterUtil.getTweets('garita_center').then(function (results) {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(results);
-	      }, function (error) {
-	        res.setHeader('Content-Type', 'application/json');
-	        res.send(error);
-	      }).catch(function (error) {
-	        res.status(200).send(error);
+	    this.db = new _mongoUtil2.default();
+	  }
+
+	  _createClass(PortModel, [{
+	    key: 'getReport',
+	    value: function getReport(city) {
+	      var _this = this;
+
+	      return new Promise(function (resolve, reject) {
+	        var promises = [];
+	        var ports = _this.getCityPorts(_ports2.default, city);
+	        promises = ports.map(function (port) {
+	          var filter = {
+	            garita: port.name
+	          };
+	          return _this.db.findOne('report', filter);
+	        });
+	        Promise.all(promises).then(function (results) {
+	          resolve(results);
+	        }).catch(function (error) {
+	          reject(error);
+	        });
 	      });
-	    } else {
-	      res.send(':(');
 	    }
-	  });
-	};
+	  }, {
+	    key: 'getCityPorts',
+	    value: function getCityPorts(ports, city) {
+	      return ports.filter(function (port) {
+	        return port.city.toUpperCase() === city.toUpperCase();
+	      });
+	    }
+	  }], [{
+	    key: 'extractData',
+	    value: function extractData(data, port) {
+	      var _this2 = this;
+
+	      var response = [];
+	      if (this.isDataValid(data)) {
+	        var ports = data.border_wait_time.port;
+	        ports.map(function (item) {
+	          if (_this2.isPortValid(item, port)) {
+	            var _CarModel$extractData = _carModel2.default.extractData(item);
+
+	            var carNormal = _CarModel$extractData.carNormal;
+	            var carSentri = _CarModel$extractData.carSentri;
+	            var carReady = _CarModel$extractData.carReady;
+
+	            var _PeopleModel$extractD = _peopleModel2.default.extractData(item);
+
+	            var peopleNormal = _PeopleModel$extractD.peopleNormal;
+	            var peopleReady = _PeopleModel$extractD.peopleReady;
+
+	            if (carNormal && carSentri && carReady && peopleNormal && peopleReady) {
+	              var carReport = _carModel2.default.formatData(carNormal, carSentri, carReady);
+	              var peopleReport = _peopleModel2.default.formatData(peopleNormal, peopleReady);
+	              response.push({
+	                car: carReport,
+	                people: peopleReport
+	              });
+	            }
+	          }
+	          return null;
+	        });
+	      }
+	      return response;
+	    }
+	  }, {
+	    key: 'isDataValid',
+	    value: function isDataValid(data) {
+	      if (data && data.border_wait_time && _lodash2.default.isArray(data.border_wait_time.port) && data.border_wait_time.port.length) {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'isPortValid',
+	    value: function isPortValid(data, port) {
+	      return data.port_number && data.port_number.indexOf(port.toString()) !== -1;
+	    }
+	  }]);
+
+	  return PortModel;
+	}();
+
+	exports.default = PortModel;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = require("lodash");
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/* eslint max-len: [2, 500, 4] */
+
+	var CarModel = function () {
+	  function CarModel() {
+	    _classCallCheck(this, CarModel);
+	  }
+
+	  _createClass(CarModel, null, [{
+	    key: "extractData",
+	    value: function extractData(data) {
+	      var carsData = data && data.passenger_vehicle_lanes ? data.passenger_vehicle_lanes.pop() : null;
+	      return carsData && carsData.standard_lanes && carsData.NEXUS_SENTRI_lanes && carsData.ready_lanes ? {
+	        carNormal: carsData.standard_lanes.pop(),
+	        carSentri: carsData.NEXUS_SENTRI_lanes.pop(),
+	        carReady: carsData.ready_lanes.pop()
+	      } : {};
+	    }
+	  }, {
+	    key: "formatData",
+	    value: function formatData(normal, sentri, ready) {
+	      return normal && normal.delay_minutes && normal.lanes_open && sentri && sentri.delay_minutes && sentri.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
+	        normal: {
+	          time: normal.delay_minutes.pop(),
+	          lanes: normal.lanes_open.pop()
+	        },
+	        sentry: {
+	          time: sentri.delay_minutes.pop(),
+	          lanes: sentri.lanes_open.pop()
+	        },
+	        readyLine: {
+	          time: ready.delay_minutes.pop(),
+	          lanes: ready.lanes_open.pop()
+	        }
+	      } : null;
+	    }
+	  }]);
+
+	  return CarModel;
+	}();
+
+	exports.default = CarModel;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
+
+
+	var _mongoUtil = __webpack_require__(9);
+
+	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var PeopleModel = function () {
+	  function PeopleModel() {
+	    _classCallCheck(this, PeopleModel);
+
+	    this.mongoUtil = new _mongoUtil2.default();
+	  }
+
+	  _createClass(PeopleModel, [{
+	    key: 'getReport',
+	    value: function getReport(data) {
+	      var _this = this;
+
+	      return new Promise(function (resolve) {
+	        var d = new Date();
+	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
+	        var top = new Date(new Date(today).toJSON());
+	        console.log('top', top);
+	        var filter = {
+	          city: data,
+	          created: {
+	            $gte: top
+	          }
+	        };
+	        var options = {
+	          sort: [['created', 'desc']]
+	        };
+	        var skip = null;
+	        var limit = 50;
+	        _this.mongoUtil.find('userReport', filter, options, skip, limit).then(function (results) {
+	          return resolve(results);
+	        }).catch(function (e) {
+	          return resolve({ status: false, message: e });
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'saveReport',
+	    value: function saveReport(data) {
+	      var _this2 = this;
+
+	      return new Promise(function (resolve, reject) {
+	        if (data.port && data.place && data.time) {
+	          _this2.mongoUtil.insertOne('userReport', data).then(function (results) {
+	            if (results.ok && results.n === 1) {
+	              resolve({ status: true });
+	            } else {
+	              reject({ status: false });
+	            }
+	          }).catch(function () {
+	            resolve({ status: false });
+	          });
+	        } else {
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }], [{
+	    key: 'extractData',
+	    value: function extractData(data) {
+	      var peopleData = data && data.pedestrian_lanes ? data.pedestrian_lanes.pop() : null;
+	      return peopleData && peopleData.standard_lanes && peopleData.ready_lanes ? {
+	        peopleNormal: peopleData.standard_lanes.pop(),
+	        peopleReady: peopleData.ready_lanes.pop()
+	      } : {};
+	    }
+	  }, {
+	    key: 'formatData',
+	    value: function formatData(normal, ready) {
+	      return normal && normal.delay_minutes && normal.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
+	        normal: {
+	          time: normal.delay_minutes.pop(),
+	          lanes: normal.lanes_open.pop()
+	        },
+	        readyLine: {
+	          time: ready.delay_minutes.pop(),
+	          lanes: ready.lanes_open.pop()
+	        }
+	      } : null;
+	    }
+	  }]);
+
+	  return PeopleModel;
+	}();
+
+	exports.default = PeopleModel;
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -287,21 +484,504 @@ module.exports =
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _twitter = __webpack_require__(8);
+	var _mongodb = __webpack_require__(10);
 
-	var _twitter2 = _interopRequireDefault(_twitter);
+	var _logUtil = __webpack_require__(11);
 
-	var _lodash = __webpack_require__(9);
+	var _logUtil2 = _interopRequireDefault(_logUtil);
+
+	var _config = __webpack_require__(13);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var dbClient = void 0;
+
+	var MongoUtil = function () {
+	  function MongoUtil() {
+	    _classCallCheck(this, MongoUtil);
+	  }
+
+	  _createClass(MongoUtil, [{
+	    key: 'openConnection',
+	    value: function openConnection() {
+	      return new Promise(function (resolve, reject) {
+	        if (!dbClient) {
+	          _mongodb.MongoClient.connect(_config2.default.get('db.url'), function (err, db) {
+	            if (err) {
+	              reject(err);
+	            } else {
+	              dbClient = db;
+	              resolve();
+	            }
+	          });
+	        } else {
+	          resolve();
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'insertOne',
+	    value: function insertOne(collectionName, data) {
+	      return new Promise(function (resolve, reject) {
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
+	          collection.insertOne(data, function (err, result) {
+	            if (err) {
+	              _logUtil2.default.log('Error insertOne ' + err);
+	              reject({ status: false });
+	            } else {
+	              resolve(result.result);
+	            }
+	          });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'findOne',
+	    value: function findOne(collectionName, filter, options) {
+	      return new Promise(function (resolve, reject) {
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
+	          collection.findOne(filter, options, function (err, document) {
+	            if (err) {
+	              reject(err);
+	            } else {
+	              resolve(document);
+	            }
+	          });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'find',
+	    value: function find(collectionName, filter, options, skip, limit) {
+	      return new Promise(function (resolve, reject) {
+	        if (dbClient) {
+	          var collection = dbClient.collection(collectionName);
+	          collection.find(filter || {}, options || {}).skip(skip || 0).limit(limit || 0).toArray(function (err, documents) {
+	            if (err) {
+	              reject(err);
+	            } else {
+	              resolve(documents);
+	            }
+	          });
+	        } else {
+	          _logUtil2.default.log('Error :: DB must be open');
+	          reject({ status: false });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'closeConnection',
+	    value: function closeConnection() {
+	      dbClient.close();
+	    }
+	  }]);
+
+	  return MongoUtil;
+	}();
+
+	exports.default = MongoUtil;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = require("mongodb");
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _loggly = __webpack_require__(12);
+
+	var _loggly2 = _interopRequireDefault(_loggly);
+
+	var _config = __webpack_require__(13);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _guidUtil = __webpack_require__(15);
+
+	var _guidUtil2 = _interopRequireDefault(_guidUtil);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var logglyClient = _loggly2.default.createClient({
+	  token: _config2.default.get('loggly.token'),
+	  subdomain: _config2.default.get('loggly.subdomain'),
+	  auth: {
+	    username: _config2.default.get('loggly.username'),
+	    password: _config2.default.get('loggly.password')
+	  },
+	  tags: ['scrapper-gcenter']
+	});
+
+	var guid = _guidUtil2.default.generate();
+
+	var LogUtil = function () {
+	  function LogUtil() {
+	    _classCallCheck(this, LogUtil);
+	  }
+
+	  _createClass(LogUtil, null, [{
+	    key: 'log',
+	    value: function log(data) {
+	      var date = new Date().toJSON();
+	      var message = date + ' :: ' + guid + ' :: ' + data;
+	      logglyClient.log(message);
+	      console.log(message);
+	    }
+	  }]);
+
+	  return LogUtil;
+	}();
+
+	exports.default = LogUtil;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("loggly");
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _convict = __webpack_require__(14);
+
+	var _convict2 = _interopRequireDefault(_convict);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// Define a schema
+	var config = (0, _convict2.default)({
+	  env: {
+	    doc: 'The applicaton environment.',
+	    format: ['production', 'development', 'test'],
+	    default: 'development',
+	    env: 'NODE_ENV'
+	  },
+	  ipaddress: {
+	    doc: 'The IP address to bind.',
+	    format: 'ipaddress',
+	    default: '127.0.0.1',
+	    env: 'OPENSHIFT_NODEJS_IP'
+	  },
+	  port: {
+	    doc: 'The port to bind.',
+	    format: 'port',
+	    default: 3000,
+	    env: 'OPENSHIFT_NODEJS_PORT'
+	  },
+	  api: {
+	    url: {
+	      doc: 'API URL',
+	      format: String,
+	      default: 'http://127.0.0.1:3000/stub/ports',
+	      env: 'API_URL'
+	    }
+	  },
+	  db: {
+	    url: {
+	      doc: 'Database hostname',
+	      format: String,
+	      default: 'mongodb://localhost:27017/gcenter',
+	      env: 'DB_URL'
+	    }
+	  },
+	  loggly: {
+	    token: {
+	      doc: 'Loggly token',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_TOKEN'
+	    },
+	    subdomain: {
+	      doc: 'Loggly subdomain',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_SUBDOMIAN'
+	    },
+	    username: {
+	      doc: 'Loggly username',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_USERNAME'
+	    },
+	    password: {
+	      doc: 'Loggly password',
+	      format: String,
+	      default: '',
+	      env: 'LOGGLY_PASSWORD'
+	    }
+	  },
+	  alchemy: {
+	    apiUrl: {
+	      doc: 'Alchemy API URL',
+	      format: String,
+	      default: '',
+	      env: 'ALCHEMY_API_URL'
+	    },
+	    token: {
+	      doc: 'Alchemy token',
+	      format: String,
+	      default: '',
+	      env: 'ALCHEMY_TOKEN'
+	    }
+	  },
+	  secureToken: {
+	    doc: 'Our token',
+	    format: String,
+	    default: '',
+	    env: 'MINT_TOKEN'
+	  },
+	  twitter: {
+	    key: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_KEY'
+	    },
+	    secret: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_SECRET'
+	    },
+	    tokenKey: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_TOKEN_KEY'
+	    },
+	    tokenSecret: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_TOKEN_SECRET'
+	    },
+	    maxRequests: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_REQUEST'
+	    },
+	    maxTime: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_TIME'
+	    },
+	    maxTweets: {
+	      doc: '',
+	      format: String,
+	      default: '',
+	      env: 'TWITTER_MAX_TWEETS'
+	    }
+	  }
+	});
+
+	// Perform validation
+	config.validate({ strict: true });
+
+	exports.default = config;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = require("convict");
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/* eslint max-len: [2, 500, 4] */
+
+	var GuidUtil = function () {
+	  function GuidUtil() {
+	    _classCallCheck(this, GuidUtil);
+	  }
+
+	  _createClass(GuidUtil, null, [{
+	    key: "generate",
+	    value: function generate() {
+	      return "" + this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
+	    }
+	  }, {
+	    key: "s4",
+	    value: function s4() {
+	      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	    }
+	  }]);
+
+	  return GuidUtil;
+	}();
+
+	exports.default = GuidUtil;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = [{
+	  id: '250401',
+	  name: 'SAN_YSIDRO',
+	  city: 'TIJUANA'
+	}, {
+	  id: '250601',
+	  name: 'OTAY',
+	  city: 'TIJUANA'
+	}, {
+	  id: '250407',
+	  name: 'PEDWEST',
+	  city: 'TIJUANA'
+	}];
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _lodash = __webpack_require__(6);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _moment = __webpack_require__(10);
+	var _twitterUtil = __webpack_require__(18);
+
+	var _twitterUtil2 = _interopRequireDefault(_twitterUtil);
+
+	var _peopleModel = __webpack_require__(8);
+
+	var _peopleModel2 = _interopRequireDefault(_peopleModel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var express = __webpack_require__(2);
+	/*eslint-disable */
+	var router = express.Router();
+	/*eslint-enable */
+
+
+	router.get('/report', function (req, res) {
+	  var city = req.param('city');
+	  var peopleModel = new _peopleModel2.default();
+	  if (city) {
+	    peopleModel.getReport(city).then(function (results) {
+	      res.setHeader('Content-Type', 'application/json');
+	      res.send(results);
+	    }, function (error) {
+	      res.setHeader('Content-Type', 'application/json');
+	      res.send(error);
+	    }).catch(function (error) {
+	      res.status(200).send(error);
+	    });
+	  } else {
+	    res.send(':(');
+	  }
+	});
+
+	router.post('/report', function (req, res) {
+	  var data = req.body;
+	  data.created = new Date();
+	  var peopleModel = new _peopleModel2.default();
+	  peopleModel.saveReport(data).then(function (results) {
+	    var twitterUtil = new _twitterUtil2.default();
+	    var status = _twitterUtil2.default.formatStatus(data);
+	    twitterUtil.postTweet(status).then(function () {
+	      res.setHeader('Content-Type', 'application/json');
+	      res.send(results);
+	    }, function () {
+	      var response = _lodash2.default.extend({}, results, {
+	        twitter: false
+	      });
+	      res.setHeader('Content-Type', 'application/json');
+	      res.send(response);
+	    }).catch(function (error) {
+	      res.status(200).send(error);
+	    });
+	  }).catch(function (error) {
+	    res.status(200).send(error);
+	  });
+	});
+
+	exports.default = router;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _twitter = __webpack_require__(19);
+
+	var _twitter2 = _interopRequireDefault(_twitter);
+
+	var _lodash = __webpack_require__(6);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _moment = __webpack_require__(20);
 
 	var _moment2 = _interopRequireDefault(_moment);
 
-	var _string = __webpack_require__(11);
+	var _string = __webpack_require__(21);
 
-	var _config = __webpack_require__(12);
+	var _config = __webpack_require__(13);
 
 	var _config2 = _interopRequireDefault(_config);
 
@@ -413,25 +1093,19 @@ module.exports =
 	exports.default = TwitterUtil;
 
 /***/ },
-/* 8 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = require("twitter");
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = require("lodash");
-
-/***/ },
-/* 10 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = require("moment");
 
 /***/ },
-/* 11 */
+/* 21 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -493,7 +1167,7 @@ module.exports =
 	}
 
 /***/ },
-/* 12 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -502,593 +1176,60 @@ module.exports =
 	  value: true
 	});
 
-	var _convict = __webpack_require__(13);
+	var _fs = __webpack_require__(23);
 
-	var _convict2 = _interopRequireDefault(_convict);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// Define a schema
-	var config = (0, _convict2.default)({
-	  env: {
-	    doc: 'The applicaton environment.',
-	    format: ['production', 'development', 'test'],
-	    default: 'development',
-	    env: 'NODE_ENV'
-	  },
-	  ipaddress: {
-	    doc: 'The IP address to bind.',
-	    format: 'ipaddress',
-	    default: '127.0.0.1',
-	    env: 'OPENSHIFT_NODEJS_IP'
-	  },
-	  port: {
-	    doc: 'The port to bind.',
-	    format: 'port',
-	    default: 3000,
-	    env: 'OPENSHIFT_NODEJS_PORT'
-	  },
-	  api: {
-	    url: {
-	      doc: 'API URL',
-	      format: String,
-	      default: 'http://127.0.0.1:3000/ports',
-	      env: 'API_URL'
-	    }
-	  },
-	  db: {
-	    url: {
-	      doc: 'Database hostname',
-	      format: String,
-	      default: 'mongodb://localhost:27017/gcenter',
-	      env: 'DB_URL'
-	    }
-	  },
-	  loggly: {
-	    token: {
-	      doc: 'Loggly token',
-	      format: String,
-	      default: '',
-	      env: 'LOGGLY_TOKEN'
-	    },
-	    subdomain: {
-	      doc: 'Loggly subdomain',
-	      format: String,
-	      default: '',
-	      env: 'LOGGLY_SUBDOMIAN'
-	    },
-	    username: {
-	      doc: 'Loggly username',
-	      format: String,
-	      default: '',
-	      env: 'LOGGLY_USERNAME'
-	    },
-	    password: {
-	      doc: 'Loggly password',
-	      format: String,
-	      default: '',
-	      env: 'LOGGLY_PASSWORD'
-	    }
-	  },
-	  alchemy: {
-	    apiUrl: {
-	      doc: 'Alchemy API URL',
-	      format: String,
-	      default: '',
-	      env: 'ALCHEMY_API_URL'
-	    },
-	    token: {
-	      doc: 'Alchemy token',
-	      format: String,
-	      default: '',
-	      env: 'ALCHEMY_TOKEN'
-	    }
-	  },
-	  secureToken: {
-	    doc: 'Our token',
-	    format: String,
-	    default: '',
-	    env: 'MINT_TOKEN'
-	  },
-	  twitter: {
-	    key: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_KEY'
-	    },
-	    secret: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_SECRET'
-	    },
-	    tokenKey: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_TOKEN_KEY'
-	    },
-	    tokenSecret: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_TOKEN_SECRET'
-	    },
-	    maxRequests: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_MAX_REQUEST'
-	    },
-	    maxTime: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_MAX_TIME'
-	    },
-	    maxTweets: {
-	      doc: '',
-	      format: String,
-	      default: '',
-	      env: 'TWITTER_MAX_TWEETS'
-	    }
-	  }
-	});
-
-	// Perform validation
-	config.validate({ strict: true });
-
-	exports.default = config;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	module.exports = require("convict");
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
-
-
-	var _mongoUtil = __webpack_require__(15);
-
-	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
+	var _fs2 = _interopRequireDefault(_fs);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var express = __webpack_require__(2);
+	/*eslint-disable */
+	var router = express.Router();
+	/*eslint-enable */
 
-	var PeopleModel = function () {
-	  function PeopleModel() {
-	    _classCallCheck(this, PeopleModel);
-	  }
-
-	  _createClass(PeopleModel, null, [{
-	    key: 'extractData',
-	    value: function extractData(data) {
-	      var peopleData = data && data.pedestrian_lanes ? data.pedestrian_lanes.pop() : null;
-	      return peopleData && peopleData.standard_lanes && peopleData.ready_lanes ? {
-	        peopleNormal: peopleData.standard_lanes.pop(),
-	        peopleReady: peopleData.ready_lanes.pop()
-	      } : {};
+	router.get('/ports', function (req, res) {
+	  _fs2.default.readFile('resources/stubs/ports.xml', function (err, data) {
+	    if (!err) {
+	      res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	      res.write(data);
+	    } else {
+	      res.writeHead(404);
 	    }
-	  }, {
-	    key: 'formatData',
-	    value: function formatData(normal, ready) {
-	      return normal && normal.delay_minutes && normal.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
-	        normal: {
-	          time: normal.delay_minutes.pop(),
-	          lanes: normal.lanes_open.pop()
-	        },
-	        readyLine: {
-	          time: ready.delay_minutes.pop(),
-	          lanes: ready.lanes_open.pop()
-	        }
-	      } : null;
-	    }
-	  }, {
-	    key: 'saveReport',
-	    value: function saveReport(data) {
-	      return new Promise(function (resolve, reject) {
-	        if (data.port && data.place && data.time) {
-	          _mongoUtil2.default.saveData('userReport', data).then(function (results) {
-	            if (results.result && results.result.ok && results.result.ok === 1) {
-	              resolve({ status: true });
-	            } else {
-	              reject({ status: false });
-	            }
-	          }).catch(function () {
-	            resolve({ status: false });
-	          });
-	        } else {
-	          reject({ status: false });
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'getReport',
-	    value: function getReport(data) {
-	      return new Promise(function (resolve) {
-	        var d = new Date();
-	        var today = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' 01:00';
-	        var filter = {
-	          city: data,
-	          created: {
-	            $gte: new Date(new Date(today).toJSON())
-	          }
-	        };
-	        var options = {
-	          sort: [['created', 'desc']]
-	        };
-	        var skip = null;
-	        var limit = 50;
-	        _mongoUtil2.default.find('userReport', filter, options, skip, limit).then(function (results) {
-	          return resolve(results);
-	        }).catch(function (e) {
-	          return resolve({ status: e });
-	        });
-	      });
-	    }
-	  }]);
-
-	  return PeopleModel;
-	}();
-
-	exports.default = PeopleModel;
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    res.end();
+	  });
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _mongodb = __webpack_require__(16);
-
-	var _config = __webpack_require__(12);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var MongoUtil = function () {
-	  function MongoUtil() {
-	    _classCallCheck(this, MongoUtil);
-	  }
-
-	  _createClass(MongoUtil, null, [{
-	    key: 'openConnection',
-	    value: function openConnection() {
-	      return new Promise(function (resolve, reject) {
-	        _mongodb.MongoClient.connect(_config2.default.get('db.url'), function (error, db) {
-	          if (error) {
-	            reject(error);
-	          } else {
-	            resolve(db);
-	          }
-	        });
-	      });
+	router.get('/san-ysidro', function (req, res) {
+	  _fs2.default.readFile('resources/stubs/cbp_san_ysidro.html', function (err, data) {
+	    if (!err) {
+	      res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	      res.write(data);
+	    } else {
+	      res.writeHead(404);
 	    }
-	  }, {
-	    key: 'saveReport',
-	    value: function saveReport(data) {
-	      var _this = this;
+	    res.end();
+	  });
+	});
 
-	      return new Promise(function (resolve, reject) {
-	        _this.openConnection().then(function (db) {
-	          var collection = db.collection('report');
-	          collection.insert(data, function (error, results) {
-	            if (error) {
-	              reject(error);
-	            } else {
-	              resolve(results);
-	            }
-	            _this.closeConnection(db);
-	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
-	      });
+	router.get('/otay', function (req, res) {
+	  _fs2.default.readFile('resources/stubs/cbp_otay.html', function (err, data) {
+	    if (!err) {
+	      res.writeHead(200, { 'Content-Type': 'text/xml', 'Content-Length': data.length });
+	      res.write(data);
+	    } else {
+	      res.writeHead(404);
 	    }
-	  }, {
-	    key: 'getReport',
-	    value: function getReport(data) {
-	      var _this2 = this;
+	    res.end();
+	  });
+	});
 
-	      return new Promise(function (resolve, reject) {
-	        _this2.openConnection().then(function (db) {
-	          var collection = db.collection('report');
-	          var options = {
-	            sort: [['created', 'desc']]
-	          };
-	          collection.findOne({ garita: data.name }, options, function (error, document) {
-	            if (error) {
-	              reject(error);
-	            } else {
-	              resolve(document);
-	            }
-	            _this2.closeConnection(db);
-	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'saveData',
-	    value: function saveData(collectionName, data) {
-	      var _this3 = this;
-
-	      data.created = new Date();
-	      return new Promise(function (resolve, reject) {
-	        _this3.openConnection().then(function (db) {
-	          var collection = db.collection(collectionName);
-	          collection.insert(data, function (error, results) {
-	            if (error) {
-	              reject(error);
-	            } else {
-	              resolve(results);
-	            }
-	            _this3.closeConnection(db);
-	          });
-	        }).catch(function (error) {
-	          reject(error);
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'find',
-	    value: function find(collectionName, filter, options, skip, limit) {
-	      var _this4 = this;
-
-	      return new Promise(function (resolve, reject) {
-	        _this4.openConnection().then(function (db) {
-	          var collection = db.collection(collectionName);
-	          collection.find(filter || {}, options || {}).skip(skip || 0).limit(limit || 0).toArray(function (err, documents) {
-	            if (err) {
-	              reject(err);
-	            } else {
-	              resolve(documents);
-	            }
-	          });
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'closeConnection',
-	    value: function closeConnection(db) {
-	      db.close();
-	    }
-	  }]);
-
-	  return MongoUtil;
-	}();
-
-	exports.default = MongoUtil;
+	exports.default = router;
 
 /***/ },
-/* 16 */
+/* 23 */
 /***/ function(module, exports) {
 
-	module.exports = require("mongodb");
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* eslint max-len: [2, 500, 4] */
-
-
-	var _lodash = __webpack_require__(9);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _carModel = __webpack_require__(18);
-
-	var _carModel2 = _interopRequireDefault(_carModel);
-
-	var _peopleModel = __webpack_require__(14);
-
-	var _peopleModel2 = _interopRequireDefault(_peopleModel);
-
-	var _mongoUtil = __webpack_require__(15);
-
-	var _mongoUtil2 = _interopRequireDefault(_mongoUtil);
-
-	var _ports = __webpack_require__(19);
-
-	var _ports2 = _interopRequireDefault(_ports);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var PortModel = function () {
-	  function PortModel() {
-	    _classCallCheck(this, PortModel);
-	  }
-
-	  _createClass(PortModel, null, [{
-	    key: 'getReport',
-	    value: function getReport(city) {
-	      var _this = this;
-
-	      return new Promise(function (resolve, reject) {
-	        var promises = [];
-	        var ports = _this.getCityPorts(_ports2.default, city);
-	        promises = ports.map(function (port) {
-	          return _mongoUtil2.default.getReport(port);
-	        });
-	        Promise.all(promises).then(function (results) {
-	          resolve(results);
-	        }).catch(function (error) {
-	          reject(error);
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'getCityPorts',
-	    value: function getCityPorts(ports, city) {
-	      return ports.filter(function (port) {
-	        return port.city.toUpperCase() === city.toUpperCase();
-	      });
-	    }
-	  }, {
-	    key: 'extractData',
-	    value: function extractData(data, port) {
-	      var _this2 = this;
-
-	      var response = [];
-	      if (this.isDataValid(data)) {
-	        var ports = data.border_wait_time.port;
-	        ports.map(function (item) {
-	          if (_this2.isPortValid(item, port)) {
-	            var _CarModel$extractData = _carModel2.default.extractData(item);
-
-	            var carNormal = _CarModel$extractData.carNormal;
-	            var carSentri = _CarModel$extractData.carSentri;
-	            var carReady = _CarModel$extractData.carReady;
-
-	            var _PeopleModel$extractD = _peopleModel2.default.extractData(item);
-
-	            var peopleNormal = _PeopleModel$extractD.peopleNormal;
-	            var peopleReady = _PeopleModel$extractD.peopleReady;
-
-	            if (carNormal && carSentri && carReady && peopleNormal && peopleReady) {
-	              var carReport = _carModel2.default.formatData(carNormal, carSentri, carReady);
-	              var peopleReport = _peopleModel2.default.formatData(peopleNormal, peopleReady);
-	              response.push({
-	                car: carReport,
-	                people: peopleReport
-	              });
-	            }
-	          }
-	          return null;
-	        });
-	      }
-	      return response;
-	    }
-	  }, {
-	    key: 'isDataValid',
-	    value: function isDataValid(data) {
-	      if (data && data.border_wait_time && _lodash2.default.isArray(data.border_wait_time.port) && data.border_wait_time.port.length) {
-	        return true;
-	      }
-	      return false;
-	    }
-	  }, {
-	    key: 'isPortValid',
-	    value: function isPortValid(data, port) {
-	      return data.port_number && data.port_number.indexOf(port.toString()) !== -1;
-	    }
-	  }]);
-
-	  return PortModel;
-	}();
-
-	exports.default = PortModel;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* eslint max-len: [2, 500, 4] */
-
-	var CarModel = function () {
-	  function CarModel() {
-	    _classCallCheck(this, CarModel);
-	  }
-
-	  _createClass(CarModel, null, [{
-	    key: "extractData",
-	    value: function extractData(data) {
-	      var carsData = data && data.passenger_vehicle_lanes ? data.passenger_vehicle_lanes.pop() : null;
-	      return carsData && carsData.standard_lanes && carsData.NEXUS_SENTRI_lanes && carsData.ready_lanes ? {
-	        carNormal: carsData.standard_lanes.pop(),
-	        carSentri: carsData.NEXUS_SENTRI_lanes.pop(),
-	        carReady: carsData.ready_lanes.pop()
-	      } : {};
-	    }
-	  }, {
-	    key: "formatData",
-	    value: function formatData(normal, sentri, ready) {
-	      return normal && normal.delay_minutes && normal.lanes_open && sentri && sentri.delay_minutes && sentri.lanes_open && ready && ready.delay_minutes && ready.lanes_open ? {
-	        normal: {
-	          time: normal.delay_minutes.pop(),
-	          lanes: normal.lanes_open.pop()
-	        },
-	        sentry: {
-	          time: sentri.delay_minutes.pop(),
-	          lanes: sentri.lanes_open.pop()
-	        },
-	        readyLine: {
-	          time: ready.delay_minutes.pop(),
-	          lanes: ready.lanes_open.pop()
-	        }
-	      } : null;
-	    }
-	  }]);
-
-	  return CarModel;
-	}();
-
-	exports.default = CarModel;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = [{
-	  id: '250401',
-	  name: 'SAN_YSIDRO',
-	  city: 'TIJUANA'
-	}, {
-	  id: '250601',
-	  name: 'OTAY',
-	  city: 'TIJUANA'
-	}, {
-	  id: '250407',
-	  name: 'PEDWEST',
-	  city: 'TIJUANA'
-	}];
+	module.exports = require("fs");
 
 /***/ }
 /******/ ]);
