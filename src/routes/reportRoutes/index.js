@@ -4,6 +4,7 @@ const router = express.Router();
 /*eslint-enable */
 import PortModel from '../../models/portModel';
 
+
 router.get('/', (req, res) => {
   const city = req.param('city');
   if (city) {
@@ -12,6 +13,9 @@ router.get('/', (req, res) => {
       .then((data) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(data));
+      })
+      .catch(() => {
+        res.send(':(');
       });
   } else {
     res.send(':(');

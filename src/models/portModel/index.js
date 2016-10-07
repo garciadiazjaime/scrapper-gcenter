@@ -10,31 +10,27 @@ import portsData from '../../constants/ports.js';
 export default class PortModel {
 
   constructor() {
-    this.db = new MongoUtil();
+    this.dbClient = new MongoUtil();
   }
 
   getReport(city) {
     return new Promise((resolve, reject) => {
-      let promises = [];
       const ports = this.getCityPorts(portsData, city);
-      promises = ports.map(port => {
+      if (_.isArray(ports) && ports.length) {
         const filter = {
-          garita: port.name,
+          $or: ports.map((item) => ({ garita: item.name })),
         };
-        return this.db.findOne('report', filter);
-      });
-      Promise.all(promises)
-        .then((results) => {
-          resolve(results);
-        })
-        .catch((error) => {
-          reject(error);
-        });
+        this.dbClient.find('report', filter)
+          .then(results => resolve(results))
+          .catch(() => reject());
+      } else {
+        reject();
+      }
     });
   }
 
   getCityPorts(ports, city) {
-    return ports.filter(port => port.city.toUpperCase() === city.toUpperCase());
+    return ports.filter(port => city && port.city.toUpperCase() === city.toUpperCase());
   }
 
   static extractData(data, port) {
