@@ -168,6 +168,8 @@ module.exports =
 	    portModel.getReport(city).then(function (data) {
 	      res.setHeader('Content-Type', 'application/json');
 	      res.send(JSON.stringify(data));
+	    }).catch(function () {
+	      res.send(':(');
 	    });
 	  } else {
 	    res.send(':(');
@@ -217,7 +219,7 @@ module.exports =
 	  function PortModel() {
 	    _classCallCheck(this, PortModel);
 
-	    this.db = new _mongoUtil2.default();
+	    this.dbClient = new _mongoUtil2.default();
 	  }
 
 	  _createClass(PortModel, [{
@@ -226,26 +228,28 @@ module.exports =
 	      var _this = this;
 
 	      return new Promise(function (resolve, reject) {
-	        var promises = [];
 	        var ports = _this.getCityPorts(_ports2.default, city);
-	        promises = ports.map(function (port) {
+	        if (_lodash2.default.isArray(ports) && ports.length) {
 	          var filter = {
-	            garita: port.name
+	            $or: ports.map(function (item) {
+	              return { garita: item.name };
+	            })
 	          };
-	          return _this.db.findOne('report', filter);
-	        });
-	        Promise.all(promises).then(function (results) {
-	          resolve(results);
-	        }).catch(function (error) {
-	          reject(error);
-	        });
+	          _this.dbClient.find('report', filter).then(function (results) {
+	            return resolve(results);
+	          }).catch(function () {
+	            return reject();
+	          });
+	        } else {
+	          reject();
+	        }
 	      });
 	    }
 	  }, {
 	    key: 'getCityPorts',
 	    value: function getCityPorts(ports, city) {
 	      return ports.filter(function (port) {
-	        return port.city.toUpperCase() === city.toUpperCase();
+	        return city && port.city.toUpperCase() === city.toUpperCase();
 	      });
 	    }
 	  }], [{
