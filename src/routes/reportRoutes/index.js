@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 /*eslint-enable */
 import PortModel from '../../models/portModel';
+import logUtil from '../../utils/logUtil';
 
 
 router.get('/', (req, res) => {
@@ -14,7 +15,8 @@ router.get('/', (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(data));
       })
-      .catch(() => {
+      .catch((error) => {
+        logUtil.log(`/report ${error}`);
         res.send(':(');
       });
   } else {

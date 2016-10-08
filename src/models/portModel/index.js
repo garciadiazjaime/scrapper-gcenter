@@ -20,9 +20,12 @@ export default class PortModel {
         const filter = {
           $or: ports.map((item) => ({ garita: item.name })),
         };
-        this.dbClient.find('report', filter)
-          .then(results => resolve(results))
-          .catch(() => reject());
+        const options = { sort: { created: -1 } };
+        const skip = null;
+        const limit = 3;
+        this.dbClient.find('report', filter, options, skip, limit)
+          .then(results => resolve(this.orderByCity(results, city)))
+          .catch((error) => reject(error));
       } else {
         reject();
       }
@@ -31,6 +34,16 @@ export default class PortModel {
 
   getCityPorts(ports, city) {
     return ports.filter(port => city && port.city.toUpperCase() === city.toUpperCase());
+  }
+
+  orderByCity(data, city) {
+    if (city && city.toUpperCase() === 'TIJUANA') {
+      const port1 = data.filter((item) => item.garita.toUpperCase() === 'SAN_YSIDRO').pop();
+      const port2 = data.filter((item) => item.garita.toUpperCase() === 'OTAY').pop();
+      const port3 = data.filter((item) => item.garita.toUpperCase() === 'PEDWEST').pop();
+      return [port1, port2, port3];
+    }
+    return data;
   }
 
   static extractData(data, port) {
