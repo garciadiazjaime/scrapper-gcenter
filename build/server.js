@@ -153,6 +153,10 @@ module.exports =
 
 	var _portModel2 = _interopRequireDefault(_portModel);
 
+	var _logUtil = __webpack_require__(11);
+
+	var _logUtil2 = _interopRequireDefault(_logUtil);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var express = __webpack_require__(2);
@@ -168,7 +172,8 @@ module.exports =
 	    portModel.getReport(city).then(function (data) {
 	      res.setHeader('Content-Type', 'application/json');
 	      res.send(JSON.stringify(data));
-	    }).catch(function () {
+	    }).catch(function (error) {
+	      _logUtil2.default.log('/report ' + error);
 	      res.send(':(');
 	    });
 	  } else {
@@ -235,10 +240,13 @@ module.exports =
 	              return { garita: item.name };
 	            })
 	          };
-	          _this.dbClient.find('report', filter).then(function (results) {
-	            return resolve(results);
-	          }).catch(function () {
-	            return reject();
+	          var options = { sort: { created: -1 } };
+	          var skip = null;
+	          var limit = 3;
+	          _this.dbClient.find('report', filter, options, skip, limit).then(function (results) {
+	            return resolve(_this.orderByCity(results, city));
+	          }).catch(function (error) {
+	            return reject(error);
 	          });
 	        } else {
 	          reject();
@@ -251,6 +259,23 @@ module.exports =
 	      return ports.filter(function (port) {
 	        return city && port.city.toUpperCase() === city.toUpperCase();
 	      });
+	    }
+	  }, {
+	    key: 'orderByCity',
+	    value: function orderByCity(data, city) {
+	      if (city && city.toUpperCase() === 'TIJUANA') {
+	        var port1 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'SAN_YSIDRO';
+	        }).pop();
+	        var port2 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'OTAY';
+	        }).pop();
+	        var port3 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'PEDWEST';
+	        }).pop();
+	        return [port1, port2, port3];
+	      }
+	      return data;
 	    }
 	  }], [{
 	    key: 'extractData',
