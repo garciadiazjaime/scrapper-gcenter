@@ -17,15 +17,11 @@ export default class PortModel {
     return new Promise((resolve, reject) => {
       const ports = this.getCityPorts(portsData, city);
       if (_.isArray(ports) && ports.length) {
-        const filter = {
-          $or: ports.map((item) => ({ garita: item.name })),
-        };
         const options = { sort: { created: -1 } };
         const skip = null;
-        const limit = 3;
-        this.dbClient.find('report', filter, options, skip, limit)
-          .then(results => resolve(this.orderByCity(results, city)))
-          .catch((error) => reject(error));
+        const limit = 1;
+        const promises = ports.map((item) => this.dbClient.find('report', { garita: item.name }, options, skip, limit));
+        Promise.all(promises).then(data => resolve(data));
       } else {
         reject();
       }

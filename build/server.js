@@ -153,6 +153,10 @@ module.exports =
 
 	var _portModel2 = _interopRequireDefault(_portModel);
 
+	var _logUtil = __webpack_require__(11);
+
+	var _logUtil2 = _interopRequireDefault(_logUtil);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var express = __webpack_require__(2);
@@ -168,6 +172,9 @@ module.exports =
 	    portModel.getReport(city).then(function (data) {
 	      res.setHeader('Content-Type', 'application/json');
 	      res.send(JSON.stringify(data));
+	    }).catch(function (error) {
+	      _logUtil2.default.log('/report ' + error);
+	      res.send(':(');
 	    });
 	  } else {
 	    res.send(':(');
@@ -217,7 +224,7 @@ module.exports =
 	  function PortModel() {
 	    _classCallCheck(this, PortModel);
 
-	    this.db = new _mongoUtil2.default();
+	    this.dbClient = new _mongoUtil2.default();
 	  }
 
 	  _createClass(PortModel, [{
@@ -226,27 +233,47 @@ module.exports =
 	      var _this = this;
 
 	      return new Promise(function (resolve, reject) {
-	        var promises = [];
 	        var ports = _this.getCityPorts(_ports2.default, city);
-	        promises = ports.map(function (port) {
-	          var filter = {
-	            garita: port.name
-	          };
-	          return _this.db.findOne('report', filter);
-	        });
-	        Promise.all(promises).then(function (results) {
-	          resolve(results);
-	        }).catch(function (error) {
-	          reject(error);
-	        });
+	        if (_lodash2.default.isArray(ports) && ports.length) {
+	          (function () {
+	            var options = { sort: { created: -1 } };
+	            var skip = null;
+	            var limit = 1;
+	            var promises = ports.map(function (item) {
+	              return _this.dbClient.find('report', { garita: item.name }, options, skip, limit);
+	            });
+	            Promise.all(promises).then(function (data) {
+	              return resolve(data);
+	            });
+	          })();
+	        } else {
+	          reject();
+	        }
 	      });
 	    }
 	  }, {
 	    key: 'getCityPorts',
 	    value: function getCityPorts(ports, city) {
 	      return ports.filter(function (port) {
-	        return port.city.toUpperCase() === city.toUpperCase();
+	        return city && port.city.toUpperCase() === city.toUpperCase();
 	      });
+	    }
+	  }, {
+	    key: 'orderByCity',
+	    value: function orderByCity(data, city) {
+	      if (city && city.toUpperCase() === 'TIJUANA') {
+	        var port1 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'SAN_YSIDRO';
+	        }).pop();
+	        var port2 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'OTAY';
+	        }).pop();
+	        var port3 = data.filter(function (item) {
+	          return item.garita.toUpperCase() === 'PEDWEST';
+	        }).pop();
+	        return [port1, port2, port3];
+	      }
+	      return data;
 	    }
 	  }], [{
 	    key: 'extractData',
