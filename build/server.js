@@ -243,7 +243,9 @@ module.exports =
 	              return _this.dbClient.find('report', { garita: item.name }, options, skip, limit);
 	            });
 	            Promise.all(promises).then(function (data) {
-	              return resolve(data);
+	              return resolve(data.map(function (item) {
+	                return item.pop();
+	              }));
 	            });
 	          })();
 	        } else {
@@ -257,23 +259,6 @@ module.exports =
 	      return ports.filter(function (port) {
 	        return city && port.city.toUpperCase() === city.toUpperCase();
 	      });
-	    }
-	  }, {
-	    key: 'orderByCity',
-	    value: function orderByCity(data, city) {
-	      if (city && city.toUpperCase() === 'TIJUANA') {
-	        var port1 = data.filter(function (item) {
-	          return item.garita.toUpperCase() === 'SAN_YSIDRO';
-	        }).pop();
-	        var port2 = data.filter(function (item) {
-	          return item.garita.toUpperCase() === 'OTAY';
-	        }).pop();
-	        var port3 = data.filter(function (item) {
-	          return item.garita.toUpperCase() === 'PEDWEST';
-	        }).pop();
-	        return [port1, port2, port3];
-	      }
-	      return data;
 	    }
 	  }], [{
 	    key: 'extractData',
