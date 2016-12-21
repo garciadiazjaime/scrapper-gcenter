@@ -235,19 +235,17 @@ module.exports =
 	      return new Promise(function (resolve, reject) {
 	        var ports = _this.getCityPorts(_ports2.default, city);
 	        if (_lodash2.default.isArray(ports) && ports.length) {
-	          var filter = {
-	            $or: ports.map(function (item) {
-	              return { garita: item.name };
-	            })
-	          };
-	          var options = { sort: { created: -1 } };
-	          var skip = null;
-	          var limit = 3;
-	          _this.dbClient.find('report', filter, options, skip, limit).then(function (results) {
-	            return resolve(_this.orderByCity(results, city));
-	          }).catch(function (error) {
-	            return reject(error);
-	          });
+	          (function () {
+	            var options = { sort: { created: -1 } };
+	            var skip = null;
+	            var limit = 1;
+	            var promises = ports.map(function (item) {
+	              return _this.dbClient.find('report', { garita: item.name }, options, skip, limit);
+	            });
+	            Promise.all(promises).then(function (data) {
+	              return resolve(data);
+	            });
+	          })();
 	        } else {
 	          reject();
 	        }
