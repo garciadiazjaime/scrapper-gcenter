@@ -38,3 +38,14 @@ Code to increase jslint max line length limit
 
 Check the current number of connections to MongoDb
 db.serverStatus().connections
+
+== Restart mongodb
+rhc cartridge-restart mongodb-2.4 -a gcenterapi
+
+== Restart app
+rhc app-restart -a gcenterapi
+
+docker build -t garciadiazjaime/api-gcenter .
+docker run -d -p 49182:3082 garciadiazjaime/api-gcenter
+docker push garciadiazjaime/api-gcenter
+docker pull garciadiazjaime/api-gcenter

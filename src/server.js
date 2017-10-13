@@ -1,11 +1,13 @@
 /* eslint max-len: [2, 500, 4] */
-import newrelic from 'newrelic';
+// import newrelic from 'newrelic';
 import express from 'express';
 import bodyParser from 'body-parser';
+import { CronJob } from 'cron';
 
 import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
 import stubRoutes from './routes/stubRoutes';
+import scrapperHelper from './main';
 
 import MongoUtil from './utils/mongoUtil';
 import config from './config';
@@ -17,7 +19,7 @@ app.use(bodyParser.urlencoded({
   extended: false,
 }));
 
-app.locals.newrelic = newrelic;
+// app.locals.newrelic = newrelic;
 
 app.use('/report', reportRoutes);
 app.use('/user', userRoutes);
@@ -34,6 +36,11 @@ app.get('*', (req, res) => {
 app.set('ipaddress', config.get('ipaddress'));
 app.set('port', config.get('port'));
 
+
+const job = new CronJob('00 */15 * * * *', () => {
+  scrapperHelper();
+}, null, false, 'America/Los_Angeles');
+
 mongoUtil.openConnection()
   .then(() => {
     const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
@@ -43,6 +50,7 @@ mongoUtil.openConnection()
       const host = server.address().address;
       const port = server.address().port;
       console.log('Example app listening at http://%s:%s', host, port);
+      job.start();
     });
   }, () => {
     console.log('Error :: No DB connection open');
