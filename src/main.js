@@ -25,7 +25,7 @@ function startRequest(port) {
 
         const data = QueryUtil.saveReport(portData, port.city, port.name);
 
-        // yield mongoUtil.openConnection();
+        yield mongoUtil.openConnection();
         const results = yield mongoUtil.insertOne('report', data);
 
         if (results) {
@@ -42,22 +42,22 @@ function startRequest(port) {
   });
 }
 
-export default function () {
-  const promises = [];
-  logUtil.log('==== start ====');
-  for (let i = 0, len = portsData.length; i < len; i++) {
-    ((port) => {
-      promises.push(startRequest(port));
-    })(portsData[i]);
-  }
-
-  Promise.all(promises)
-    .then(() => {
-      // mongoUtil.closeConnection();
-      logUtil.log('==== done ====');
-    })
-    .catch(error => {
-      // mongoUtil.closeConnection();
-      logUtil.log(`promise error ${error}`);
-    });
+const promises = [];
+logUtil.log('==== start ====');
+for (let i = 0, len = portsData.length; i < len; i++) {
+  ((port) => {
+    promises.push(startRequest(port));
+  })(portsData[i]);
 }
+
+Promise.all(promises)
+.then(() => {
+  mongoUtil.closeConnection();
+  logUtil.log('==== done ====');
+  process.exit();
+})
+.catch(error => {
+  mongoUtil.closeConnection();
+  logUtil.log(`promise error ${error}`);
+  process.exit();
+});

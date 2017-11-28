@@ -7,7 +7,7 @@ import { CronJob } from 'cron';
 import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
 import stubRoutes from './routes/stubRoutes';
-import scrapperHelper from './main';
+import scrapperController from './controllers/scrapperController';
 
 import MongoUtil from './utils/mongoUtil';
 import config from './config';
@@ -38,7 +38,7 @@ app.set('port', config.get('port'));
 
 
 const job = new CronJob('00 */15 * * * *', () => {
-  scrapperHelper();
+  scrapperController();
 }, null, false, 'America/Los_Angeles');
 
 mongoUtil.openConnection()
