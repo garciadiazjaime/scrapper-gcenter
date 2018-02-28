@@ -16,13 +16,13 @@ const config = convict({
   port: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 3000,
+    default: 3030,
   },
   api: {
     url: {
       doc: 'API URL',
       format: String,
-      default: 'http://127.0.0.1:3000/stub/ports',
+      default: 'http://127.0.0.1:3030/stub/ports',
       env: 'API_URL',
     },
   },

@@ -1,5 +1,6 @@
 /* eslint max-len: [2, 500, 4] */
 import MongoUtil from '../../utils/mongoUtil';
+import moment from 'moment';
 
 export default class PeopleModel {
 
@@ -9,14 +10,13 @@ export default class PeopleModel {
 
   getReport(data) {
     return new Promise((resolve) => {
-      const d = new Date();
-      const today = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} 01:00`;
-      const top = new Date(new Date(today).toJSON());
-      console.log('top', top);
+      const curDate = moment().subtract(1, 'days').utc()
+        .format();
+      const startDate = new Date(curDate);
       const filter = {
         city: data,
         created: {
-          $gte: top,
+          $gte: startDate,
         },
       };
       const options = {
@@ -32,7 +32,7 @@ export default class PeopleModel {
 
   saveReport(data) {
     return new Promise((resolve, reject) => {
-      if (data.port && data.place && data.time) {
+      if (data.port && data.type && data.entry && data.time) {
         this.mongoUtil.insertOne('userReport', data)
           .then((results) => {
             if (results.ok && results.n === 1) {
@@ -48,6 +48,13 @@ export default class PeopleModel {
         reject({ status: false });
       }
     });
+  }
+
+  saveLocation(data) {
+    if (data && data.latitude && data.longitude) {
+      return this.mongoUtil.insertOne('userLocation', data);
+    }
+    return Promise.reject();
   }
 
   static extractData(data) {

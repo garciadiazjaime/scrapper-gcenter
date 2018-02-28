@@ -1,13 +1,15 @@
 FROM node:boron
 
+ADD package.json /tmp/package.json
+
+RUN cd /tmp && npm install
+
+RUN mkdir -p /usr/src/app && cp -a /tmp/node_modules /usr/src/app
+
 WORKDIR /usr/src/app
 
-COPY package.json .
+ADD . /usr/src/app
 
-RUN npm install
-
-COPY . .
-
-EXPOSE 3000
+EXPOSE 3030
 
 CMD [ "node", "./build/server.js" ]

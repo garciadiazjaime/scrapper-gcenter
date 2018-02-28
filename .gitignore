@@ -6,3 +6,5 @@ npm-debug.log
 newrelic_agent.log
 tmp/
 build
+coverage
+yarn-error.log

@@ -17,8 +17,8 @@ function startRequest(port) {
     (runGenerator(function *() {
       try {
         logUtil.log(`getting data for ${port.name}...`);
-
         const requestResponse = yield RequestUtil.get(config.get('api.url'));
+
         const jsonData = yield XmlUtil.parseToJson(requestResponse);
 
         const portData = PortModel.extractData(jsonData, port.id);

@@ -3,6 +3,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { CronJob } from 'cron';
+import cors from 'cors';
 
 import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
+app.use(cors());
 
 // app.locals.newrelic = newrelic;
 

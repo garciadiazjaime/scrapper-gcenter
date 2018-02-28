@@ -15,7 +15,11 @@
     "cron": "node build/main.js",
     "lint": "./node_modules/.bin/eslint .",
     "update": "git checkout master && git pull origin develop",
-    "deploy": "git add . && git commit -m 'deploy' && git push upstream HEAD:master"
+    "deploy": "git add . && git commit -m 'deploy' && git push upstream HEAD:master",
+    "docker:build": "docker build -t garciadiazjaime/api-gcenter .",
+    "docker:run": "docker run -d -p 49182:3030 --link mongo -e='DB_URL=mongodb://mongo/gcenter' --name=api-gcenter garciadiazjaime/api-gcenter",
+    "docker:push": "docker push garciadiazjaime/api-gcenter",
+    "docker:pull": "docker pull garciadiazjaime/api-gcenter"
   },
   "keywords": [],
   "author": "garciadiazjaime@gmail.com",
@@ -24,6 +28,7 @@
     "babel-polyfill": "^6.9.1",
     "body-parser": "^1.15.2",
     "convict": "^1.4.0",
+    "cors": "^2.8.4",
     "cron": "^1.3.0",
     "express": "^4.14.0",
     "googleanalytics": "^0.3.7",

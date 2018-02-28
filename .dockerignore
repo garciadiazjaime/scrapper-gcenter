@@ -1,7 +1,4 @@
 .git
-.openshift
-bower_components
-docs
 node_modules
 npm-debug.log
-data
+coverage
