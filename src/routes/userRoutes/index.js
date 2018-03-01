@@ -1,10 +1,9 @@
-const express = require('express');
-// import _ from 'lodash';
-/*eslint-disable */
-const router = express.Router();
-/*eslint-enable */
+import express from 'express';
+
+const router = express.Router(); //eslint-disable-line
 // import TwitterUtil from '../../utils/twitterUtil';
 import PeopleModel from '../../models/peopleModel';
+import UserLocation from '../../models/userLocationModel';
 
 // const saveOnTwitter = (data) => {
 //   const twitterUtil = new TwitterUtil();
@@ -61,12 +60,29 @@ router.post('/report', (req, res) => {
 });
 
 router.post('/location', (req, res) => {
-  const peopleModel = new PeopleModel();
-  const { body } = req;
-  body.created = new Date();
-  peopleModel.saveLocation(body)
-    .then(results => {
-      res.json(results);
+  const {
+    body,
+  } = req;
+  const userLocation = new UserLocation(body);
+  userLocation.save()
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(error => {
+      res.status(500).send(error);
+    });
+});
+
+router.get('/location', (req, res) => {
+  const hours = 3;
+  const queryLastNhrsUsers = {
+    created: {
+      $gt: new Date(Date.now() - hours * 60 * 60 * 1000),
+    },
+  };
+  UserLocation.find(queryLastNhrsUsers).sort({ created: -1 })
+    .then(userLocations => {
+      res.json(userLocations);
     })
     .catch(error => {
       res.status(500).send(error);

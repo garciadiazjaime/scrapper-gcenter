@@ -4,11 +4,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { CronJob } from 'cron';
 import cors from 'cors';
+import morgan from 'morgan';
 
 import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
 import stubRoutes from './routes/stubRoutes';
 import scrapperController from './controllers/scrapperController';
+import { openDatabase } from './utils/dbUtil';
 
 import MongoUtil from './utils/mongoUtil';
 import config from './config';
@@ -20,7 +22,7 @@ app.use(bodyParser.urlencoded({
   extended: false,
 }));
 app.use(cors());
-
+app.use(morgan('tiny'));
 // app.locals.newrelic = newrelic;
 
 app.use('/report', reportRoutes);
@@ -44,6 +46,7 @@ const job = new CronJob('00 */15 * * * *', () => {
 }, null, false, 'America/Los_Angeles');
 
 mongoUtil.openConnection()
+  .then(() => openDatabase(config.get('db.url')))
   .then(() => {
     const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
       if (err) {
@@ -54,6 +57,5 @@ mongoUtil.openConnection()
       console.log('Example app listening at http://%s:%s', host, port);
       job.start();
     });
-  }, () => {
-    console.log('Error :: No DB connection open');
-  });
+  })
+  .catch(console.log);
