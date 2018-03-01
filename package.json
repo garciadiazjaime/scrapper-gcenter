@@ -17,7 +17,7 @@
     "update": "git checkout master && git pull origin develop",
     "deploy": "git add . && git commit -m 'deploy' && git push upstream HEAD:master",
     "build": "./node_modules/.bin/babel src -d dist",
-    "docker:build": "docker build -t garciadiazjaime/api-gcenter .",
+    "docker:build": "yarn build && docker build -t garciadiazjaime/api-gcenter .",
     "docker:run": "docker run -d -p 49182:3030 --link mongo -e='DB_URL=mongodb://mongo/gcenter' --name=api-gcenter garciadiazjaime/api-gcenter",
     "docker:push": "docker push garciadiazjaime/api-gcenter",
     "docker:pull": "docker pull garciadiazjaime/api-gcenter"

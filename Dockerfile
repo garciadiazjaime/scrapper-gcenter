@@ -12,4 +12,4 @@ ADD . /usr/src/app
 
 EXPOSE 3030
 
-CMD [ "node", "./build/server.js" ]
+CMD [ "node", "./dist/server.js" ]
