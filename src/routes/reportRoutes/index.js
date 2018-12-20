@@ -2,8 +2,8 @@ const express = require('express');
 /*eslint-disable */
 const router = express.Router();
 /*eslint-enable */
-import PortModel from '../../models/portModel';
-import logUtil from '../../utils/logUtil';
+const PortModel = require('../../models/portModel');
+const logUtil = require('../../utils/logUtil');
 
 
 router.get('/', (req, res) => {
@@ -24,4 +24,4 @@ router.get('/', (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

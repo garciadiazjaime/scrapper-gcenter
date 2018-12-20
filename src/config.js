@@ -1,4 +1,4 @@
-import convict from 'convict';
+const convict = require('convict');
 
 // Define a schema
 const config = convict({
@@ -127,6 +127,6 @@ const config = convict({
 });
 
 // Perform validation
-config.validate({ strict: true });
+config.validate({ allowed: 'strict' });
 
-export default config;
+module.exports = config;

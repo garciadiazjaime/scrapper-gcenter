@@ -1,14 +1,14 @@
-import runGenerator from './utils/runGenerator';
-import RequestUtil from './utils/requestUtil';
-import XmlUtil from './utils/xmlUtil';
-import PortModel from './models/portModel';
-import MongoUtil from './utils/mongoUtil';
-import QueryUtil from './utils/mongoUtil/queryUtil';
-import config from './config';
-import logUtil from './utils/logUtil';
-import portsData from './constants/ports';
+const runGenerator = require('./utils/runGenerator');
+const RequestUtil = require('./utils/requestUtil');
+const XmlUtil = require('./utils/xmlUtil');
+const PortModel = require('./models/portModel');
+const MongoUtil = require('./utils/mongoUtil');
+const QueryUtil = require('./utils/mongoUtil/queryUtil');
+const config = require('./config');
+const logUtil = require('./utils/logUtil');
+const portsData = require('./constants/ports');
 
-import 'babel-polyfill';
+require('babel-polyfill');
 
 const mongoUtil = new MongoUtil();
 
@@ -42,7 +42,7 @@ function startRequest(port) {
   });
 }
 
-export default function () {
+module.exports = function () {
   const promises = [];
   logUtil.log('==== start ====');
   for (let i = 0, len = portsData.length; i < len; i++) {
@@ -60,4 +60,4 @@ export default function () {
       // mongoUtil.closeConnection();
       logUtil.log(`promise error ${error}`);
     });
-}
+};

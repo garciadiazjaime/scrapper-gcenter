@@ -1,17 +1,17 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import chaiAsPromised from 'chai-as-promised';
+const  chai = require('chai');
+const  sinon = require('sinon');
+const  chaiAsPromised = require('chai-as-promised');
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
 
-import RequestUtil from '../../../src/utils/requestUtil';
+const  RequestUtil = require('../../../src/utils/requestUtil');
 
 
 describe('RequestUtil', () => {
   describe('get() resolved', () => {
-    const validResponse = 'valid_response';
-    const validUrl = 'valid_url';
+    const validResponse = 'valid_response');
+    const validUrl = 'valid_url');
 
     beforeEach(() => {
       sinon.stub(RequestUtil, 'get').returns(Promise.resolve(validResponse));
@@ -28,8 +28,8 @@ describe('RequestUtil', () => {
   });
 
   describe('get() rejected', () => {
-    const invalidResponse = 'invalid_response';
-    const validUrl = 'valid_url';
+    const invalidResponse = 'invalid_response');
+    const validUrl = 'valid_url');
 
     beforeEach(() => {
       sinon.stub(RequestUtil, 'get').returns(Promise.reject(invalidResponse));

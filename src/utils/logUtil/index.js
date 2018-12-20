@@ -1,5 +1,5 @@
-// import loggly from 'loggly';
-import config from '../../config';
+// const loggly = require('loggly');
+const config = require('../../config');
 
 
 // const logglyClient = loggly.createClient({
@@ -12,10 +12,10 @@ import config from '../../config';
 //   tags: ['scrapper-gcenter'],
 // });
 
-import GuidUtil from '../guidUtil';
+const GuidUtil = require('../guidUtil');
 const guid = GuidUtil.generate();
 
-export default class LogUtil {
+module.exports = class LogUtil {
   static log(data) {
     const date = new Date().toJSON();
     const message = `${date} :: ${guid} :: ${data}`;

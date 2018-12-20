@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 const express = require('express');
 /*eslint-disable */
 const router = express.Router();
@@ -41,4 +41,4 @@ router.get('/otay', (req, res) => {
   });
 });
 
-export default router;
+module.exports = router;

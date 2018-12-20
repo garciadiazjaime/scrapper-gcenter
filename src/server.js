@@ -1,16 +1,14 @@
-/* eslint max-len: [2, 500, 4] */
-// import newrelic from 'newrelic';
-import express from 'express';
-import bodyParser from 'body-parser';
-import { CronJob } from 'cron';
+const express = require('express');
+const bodyParser = require('body-parser');
+const { CronJob } = require('cron');
 
-import reportRoutes from './routes/reportRoutes';
-import userRoutes from './routes/userRoutes';
-import stubRoutes from './routes/stubRoutes';
-import scrapperHelper from './main';
+const reportRoutes = require('./routes/reportRoutes');
+const userRoutes = require('./routes/userRoutes');
+const stubRoutes = require('./routes/stubRoutes');
+const scrapperHelper = require('./main');
 
-import MongoUtil from './utils/mongoUtil';
-import config from './config';
+const MongoUtil = require('./utils/mongoUtil');
+const config = require('./config');
 
 const app = express();
 const mongoUtil = new MongoUtil();
@@ -19,7 +17,6 @@ app.use(bodyParser.urlencoded({
   extended: false,
 }));
 
-// app.locals.newrelic = newrelic;
 
 app.use('/report', reportRoutes);
 app.use('/user', userRoutes);

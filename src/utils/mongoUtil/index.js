@@ -1,9 +1,10 @@
-import { MongoClient } from 'mongodb';
-import logUtil from '../logUtil';
-import config from '../../config';
+const { MongoClient } = require('mongodb');
+
+const logUtil = require('../logUtil');
+const config = require('../../config');
 let dbClient;
 
-export default class MongoUtil {
+module.exports = class MongoUtil {
 
   openConnection() {
     return new Promise((resolve, reject) => {

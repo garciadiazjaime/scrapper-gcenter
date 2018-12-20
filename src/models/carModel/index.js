@@ -1,6 +1,6 @@
 /* eslint max-len: [2, 500, 4] */
 
-export default class CarModel {
+module.exports = class CarModel {
 
   static extractData(data) {
     const carsData = data && data.passenger_vehicle_lanes ? data.passenger_vehicle_lanes.pop() : null;
@@ -27,4 +27,4 @@ export default class CarModel {
       },
     } : null;
   }
-}
+};

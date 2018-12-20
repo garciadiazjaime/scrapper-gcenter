@@ -1,13 +1,13 @@
 /* eslint max-len: [2, 500, 4] */
-import _ from 'lodash';
+const _ = require('lodash');
 
-import CarModel from '../carModel';
-import PeopleModel from '../peopleModel';
-import MongoUtil from '../../utils/mongoUtil';
-import portsData from '../../constants/ports.js';
+const CarModel = require('../carModel');
+const PeopleModel = require('../peopleModel');
+const MongoUtil = require('../../utils/mongoUtil');
+const portsData = require('../../constants/ports.js');
 
 
-export default class PortModel {
+module.exports = class PortModel {
 
   constructor() {
     this.dbClient = new MongoUtil();
@@ -65,4 +65,4 @@ export default class PortModel {
   static isPortValid(data, port) {
     return data.port_number && data.port_number.indexOf(port.toString()) !== -1;
   }
-}
+};

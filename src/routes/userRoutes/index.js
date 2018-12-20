@@ -1,10 +1,10 @@
-import _ from 'lodash';
+const _ = require('lodash');
 const express = require('express');
 /*eslint-disable */
 const router = express.Router();
 /*eslint-enable */
-import TwitterUtil from '../../utils/twitterUtil';
-import PeopleModel from '../../models/peopleModel';
+const TwitterUtil = require('../../utils/twitterUtil');
+const PeopleModel = require('../../models/peopleModel');
 
 
 router.get('/report', (req, res) => {
@@ -55,4 +55,4 @@ router.post('/report', (req, res) => {
     });
 });
 
-export default router;
+module.exports = router;

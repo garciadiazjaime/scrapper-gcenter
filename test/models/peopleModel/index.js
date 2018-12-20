@@ -1,14 +1,14 @@
-import chai from 'chai';
+const chai = require('chai');
 const { expect } = chai;
 
 
-import PeopleModel from '../../../src/models/peopleModel';
-import stubData from '../../../resources/stubs/port.json';
+const PeopleModel = require('../../../src/models/peopleModel');
+const stubData = require('../../../resources/stubs/port.json');
 
 
 describe('PeopleModel', () => {
   describe('extractData()', () => {
-    const invalidStubData = 'invalid_stub_data';
+    const invalidStubData = 'invalid_stub_data');
 
     it('returns valid results', () => {
       const { peopleNormal, peopleReady } = PeopleModel.extractData(stubData);

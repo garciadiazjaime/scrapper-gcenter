@@ -1,18 +1,18 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import chaiAsPromised from 'chai-as-promised';
+const chai = require('chai');
+const sinon = require('sinon');
+const chaiAsPromised = require('chai-as-promised');
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
 
-import MongoUtil from '../../../src/utils/mongoUtil';
-import { MongoClient } from 'mongodb';
-import config from '../../../src/config';
+const MongoUtil = require('../../../src/utils/mongoUtil');
+const { MongoClient } = require('mongodb');
+const config = require('../../../src/config');
 
 describe('MongoUtil', () => {
   describe('saveReport() resolved', () => {
-    const validResponse = 'valid_response';
-    const validData = 'valid_data';
+    const validResponse = 'valid_response');
+    const validData = 'valid_data');
     const dbStub = {
       collection: () => ({
         insert: (param, cb) => {
@@ -37,8 +37,8 @@ describe('MongoUtil', () => {
   });
 
   describe('saveReport() rejected', () => {
-    const invalidResponse = 'invalid_response';
-    const validData = 'valid_data';
+    const invalidResponse = 'invalid_response');
+    const validData = 'valid_data');
 
     beforeEach(() => {
       sinon.stub(MongoUtil, 'openConnection').returns(Promise.reject(invalidResponse));
@@ -56,8 +56,8 @@ describe('MongoUtil', () => {
   });
 
   describe('save() rejected', () => {
-    const invalidResponse = 'invalid_response';
-    const validData = 'valid_data';
+    const invalidResponse = 'invalid_response');
+    const validData = 'valid_data');
     const dbStub = {
       collection: () => ({
         insert: (param, cb) => {
@@ -82,7 +82,7 @@ describe('MongoUtil', () => {
   });
 
   describe('openConnection() resolved', () => {
-    const validResponse = 'valid_response';
+    const validResponse = 'valid_response');
 
     beforeEach(() => {
       sinon.stub(MongoClient, 'connect', (arg1, cb) => {
@@ -103,7 +103,7 @@ describe('MongoUtil', () => {
   });
 
   describe('openConnection() rejected', () => {
-    const invalidResponse = 'invalid_response';
+    const invalidResponse = 'invalid_response');
 
     beforeEach(() => {
       sinon.stub(MongoClient, 'connect').throws(invalidResponse);

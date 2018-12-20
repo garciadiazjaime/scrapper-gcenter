@@ -1,7 +1,7 @@
 /* eslint max-len: [2, 500, 4] */
-import MongoUtil from '../../utils/mongoUtil';
+const MongoUtil = require('../../utils/mongoUtil');
 
-export default class PeopleModel {
+module.exports = class PeopleModel {
 
   constructor() {
     this.mongoUtil = new MongoUtil();
@@ -70,4 +70,4 @@ export default class PeopleModel {
       },
     } : null;
   }
-}
+};

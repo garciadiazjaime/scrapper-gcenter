@@ -1,6 +1,6 @@
-import _ from 'lodash';
+const _ = require('lodash');
 
-export default class QueryUtil {
+module.exports = class QueryUtil {
 
   static saveReport(data, city, garita) {
     return _.isArray(data) && data.length && city && city.length && garita && garita.length ? {

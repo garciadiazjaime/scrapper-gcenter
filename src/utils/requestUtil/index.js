@@ -1,6 +1,6 @@
-import request from 'request';
+const request = require('request');
 
-export default class RequestUtil {
+module.exports = class RequestUtil {
 
   static get(url) {
     return new Promise((resolve, reject) => {

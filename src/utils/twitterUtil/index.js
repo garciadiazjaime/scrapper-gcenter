@@ -1,9 +1,9 @@
-import Twitter from 'twitter';
-import _ from 'lodash';
-import moment from 'moment';
+const _ = require('lodash');
+const Twitter = require('twitter');
+const moment = require('moment');
 
-import { toTitleCase } from '../string';
-import config from '../../config';
+const { toTitleCase } = require('../string');
+const config = require('../../config');
 const constants = {
   twitter: {
     maxRequests: config.get('twitter.maxRequests'),
@@ -20,7 +20,7 @@ const cache = {
   },
 };
 
-export default class TwitterUtil {
+module.exports = class TwitterUtil {
 
   constructor() {
     this.client = new Twitter({

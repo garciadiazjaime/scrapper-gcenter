@@ -1,17 +1,17 @@
-import chai from 'chai';
+const chai = require('chai');
 const { expect } = chai;
 
 
-import QueryUtil from '../../../src/utils/mongoUtil/queryUtil';
-import stubData from '../../../resources/stubs/portData.json';
+const QueryUtil = require('../../../src/utils/mongoUtil/queryUtil');
+const stubData = require('../../../resources/stubs/portData.json');
 
 
 describe.only('QueryUtil', () => {
   describe('saveReport()', () => {
-    const city = 'tijuana';
-    const portName = 'port_name';
-    const invalidPortName = '';
-    const invalidStubData = 'invalid_stub_data';
+    const city = 'tijuana');
+    const portName = 'port_name');
+    const invalidPortName = '');
+    const invalidStubData = 'invalid_stub_data');
 
     it('returns valid results', () => {
       const results = QueryUtil.saveReport(stubData, city, portName);

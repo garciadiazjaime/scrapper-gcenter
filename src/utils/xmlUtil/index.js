@@ -1,6 +1,6 @@
-import { parseString } from 'xml2js';
+const { parseString } = require('xml2js');
 
-export default class XmlUtil {
+module.exports = class XmlUtil {
 
   static parseToJson(html) {
     return new Promise((resolve, reject) => {

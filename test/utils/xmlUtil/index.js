@@ -1,17 +1,17 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import chaiAsPromised from 'chai-as-promised';
+const chai = require('chai');
+const sinon = require('sinon');
+const chaiAsPromised = require('chai-as-promised');
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
 
-import XmlUtil from '../../../src/utils/xmlUtil';
+const XmlUtil = require('../../../src/utils/xmlUtil');
 
 
 describe('XmlUtil', () => {
   describe('parseToJson() resolved', () => {
-    const validResponse = 'valid_response';
-    const validArgument = 'valid_argument';
+    const validResponse = 'valid_response');
+    const validArgument = 'valid_argument');
 
     beforeEach(() => {
       sinon.stub(XmlUtil, 'parseToJson').returns(Promise.resolve(validResponse));
@@ -28,8 +28,8 @@ describe('XmlUtil', () => {
   });
 
   describe('parseToJson() rejected', () => {
-    const invalidResponse = 'invalid_response';
-    const validArgument = 'valid_argument';
+    const invalidResponse = 'invalid_response');
+    const validArgument = 'valid_argument');
 
     beforeEach(() => {
       sinon.stub(XmlUtil, 'parseToJson').returns(Promise.reject(invalidResponse));

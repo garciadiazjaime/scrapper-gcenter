@@ -1,6 +1,6 @@
 /* eslint max-len: [2, 500, 4] */
 
-export default class GuidUtil {
+module.exports =  class GuidUtil {
 
   static generate() {
     return `${this.s4()}${this.s4()}-${this.s4()}-${this.s4()}-${this.s4()}-${this.s4()}${this.s4()}${this.s4()}`;

@@ -1,5 +1,5 @@
 /*eslint-disable */
-export default function (makeGenerator) {
+module.exports =  function (makeGenerator) {
   return () => {
     const generator = makeGenerator.apply(this, arguments);
 

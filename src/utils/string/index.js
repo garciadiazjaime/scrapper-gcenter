@@ -6,7 +6,7 @@ function printMinutes(data) {
   return data;
 }
 
-export function minsToHrs(data) {
+module.exports.minsToHrs = function minsToHrs(data) {
   if (data) {
     const hours = Math.floor(data / 60);
     const minutes = data % 60;
@@ -15,14 +15,14 @@ export function minsToHrs(data) {
   return data;
 }
 
-export function toTitleCase(data) {
+module.exports.toTitleCase = function toTitleCase(data) {
   const response = data.replace(/_/g, ' ');
   return response.replace(/\w\S*/g, (txt) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 }
 
-export function timeSince(data) {
+module.exports.timeSince = function timeSince(data) {
   const seconds = Math.floor((new Date() - new Date(data)) / 1000);
   let interval = Math.floor(seconds / 31536000);
 
