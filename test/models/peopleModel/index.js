@@ -8,7 +8,7 @@ const stubData = require('../../../resources/stubs/port.json');
 
 describe('PeopleModel', () => {
   describe('extractData()', () => {
-    const invalidStubData = 'invalid_stub_data');
+    const invalidStubData = 'invalid_stub_data';
 
     it('returns valid results', () => {
       const { peopleNormal, peopleReady } = PeopleModel.extractData(stubData);

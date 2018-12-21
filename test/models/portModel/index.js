@@ -8,9 +8,9 @@ const stubData = require('../../../resources/stubs/cbp.json');
 
 describe('PeopleModel', () => {
   describe('extractData()', () => {
-    const validPort = '250401');
-    const invalidPort = 'invalid_port');
-    const invalidStubData = 'invalid_stub_data');
+    const validPort = '250401';
+    const invalidPort = 'invalid_port';
+    const invalidStubData = 'invalid_stub_data';
 
     it('returns valid results', () => {
       const results = PortModel.extractData(stubData, validPort);

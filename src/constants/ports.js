@@ -1,4 +1,4 @@
-module.exports =  [{
+module.exports = [{
   id: '250401',
   name: 'SAN_YSIDRO',
   city: 'TIJUANA',

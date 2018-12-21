@@ -3,8 +3,6 @@ const express = require('express');
 const router = express.Router();
 /*eslint-enable */
 const PortModel = require('../../models/portModel');
-const logUtil = require('../../utils/logUtil');
-
 
 router.get('/', (req, res) => {
   const city = req.param('city');

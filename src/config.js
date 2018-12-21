@@ -34,52 +34,6 @@ const config = convict({
       env: 'DB_URL',
     },
   },
-  loggly: {
-    token: {
-      doc: 'Loggly token',
-      format: String,
-      default: '',
-      env: 'LOGGLY_TOKEN',
-    },
-    subdomain: {
-      doc: 'Loggly subdomain',
-      format: String,
-      default: '',
-      env: 'LOGGLY_SUBDOMIAN',
-    },
-    username: {
-      doc: 'Loggly username',
-      format: String,
-      default: '',
-      env: 'LOGGLY_USERNAME',
-    },
-    password: {
-      doc: 'Loggly password',
-      format: String,
-      default: '',
-      env: 'LOGGLY_PASSWORD',
-    },
-  },
-  alchemy: {
-    apiUrl: {
-      doc: 'Alchemy API URL',
-      format: String,
-      default: '',
-      env: 'ALCHEMY_API_URL',
-    },
-    token: {
-      doc: 'Alchemy token',
-      format: String,
-      default: '',
-      env: 'ALCHEMY_TOKEN',
-    },
-  },
-  secureToken: {
-    doc: 'Our token',
-    format: String,
-    default: '',
-    env: 'MINT_TOKEN',
-  },
   twitter: {
     key: {
       doc: '',
