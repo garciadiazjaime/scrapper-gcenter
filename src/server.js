@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const debug = require('debug')('server');
 
 const reportRoutes = require('./routes/reportRoutes');
-const userRoutes = require('./routes/userRoutes');
 const stubRoutes = require('./routes/stubRoutes');
 const reportScraper = require('./report-scraper');
 
@@ -19,7 +18,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/report', reportRoutes);
-app.use('/user', userRoutes);
 app.use('/stub', stubRoutes);
 
 app.get('*', (req, res) => {
