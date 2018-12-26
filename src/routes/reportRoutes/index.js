@@ -1,11 +1,12 @@
 const express = require('express');
 const debug = require('debug')('reportRoutes');
+const cors = require('cors');
 
 const router = express.Router(); // eslint-disable-line
 
 const PortModel = require('../../models/portModel');
 
-router.get('/', async (req, res) => {
+router.get('/', cors(), async (req, res) => {
   const city = req.param('city');
   if (city) {
     const report = await PortModel.find({
