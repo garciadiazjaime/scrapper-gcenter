@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { CronJob } = require('cron');
+const mongoose = require('mongoose');
 const debug = require('debug')('server');
 
 const reportRoutes = require('./routes/reportRoutes');
@@ -8,11 +9,9 @@ const userRoutes = require('./routes/userRoutes');
 const stubRoutes = require('./routes/stubRoutes');
 const reportScraper = require('./report-scraper');
 
-const MongoUtil = require('./utils/mongoUtil');
 const config = require('./config');
 
 const app = express();
-const mongoUtil = new MongoUtil();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -36,7 +35,7 @@ const job = new CronJob('00 */15 * * * *', async () => {
 }, null, false, 'America/Los_Angeles');
 
 async function main() {
-  await mongoUtil.openConnection();
+  await mongoose.connect(config.get('db.url'), { useNewUrlParser: true });
 
   const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
     if (err) {
@@ -45,7 +44,7 @@ async function main() {
     const host = server.address().address;
     const port = server.address().port;
     debug(`Example app listening at http://${host}:${port}`);
-    // job.start();
+    job.start();
   });
 }
 

@@ -95,7 +95,7 @@ function extractReport(data, city) {
   const cityPorts = getPorts(data, city.ports);
 
   const report = cityPorts.reduce((accumulator, item) => {
-    accumulator[city.ports[item.port_number[0]]] = getEntryData(item);
+    accumulator[city.ports[item.port_number[0]]] = getEntryData(item); // eslint-disable-line
     return accumulator;
   }, {});
 
