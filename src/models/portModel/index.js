@@ -54,19 +54,18 @@ function getEntryData(data) {
     entries.forEach(([key, prop]) => {
       const entryData = data[keyType][0][key];
 
-      if (entryData) {
+      if (entryData && entryData[0]
+        && entryData[0].delay_minutes && entryData[0].delay_minutes[0]
+        && entryData[0].lanes_open && entryData[0].lanes_open[0]) {
         //
-        if (entryData[0].delay_minutes[0] && entryData[0].lanes_open[0]) {
-          //
-          if (!report[prop]) {
-            report[prop] = {};
-          }
-
-          report[prop][type] = {
-            time: entryData[0].delay_minutes[0],
-            lanes: entryData[0].lanes_open[0],
-          };
+        if (!report[prop]) {
+          report[prop] = {};
         }
+
+        report[prop][type] = {
+          time: entryData[0].delay_minutes[0],
+          lanes: entryData[0].lanes_open[0],
+        };
       }
     });
   });
