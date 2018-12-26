@@ -20,7 +20,6 @@ async function getReport(url) {
 async function getReportForCity(fullReport, city) {
   debug(`getting data for ${city.name}...`);
 
-
   const report = extractReport(fullReport, city);
 
   const portModel = new PortModel({

@@ -10,6 +10,7 @@ const reportScraper = require('./report-scraper');
 
 const config = require('./config');
 
+mongoose.Promise = global.Promise;
 const app = express();
 
 app.use(bodyParser.json());

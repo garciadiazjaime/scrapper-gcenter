@@ -1,19 +1,26 @@
 const express = require('express');
 const debug = require('debug')('reportRoutes');
-/*eslint-disable */
-const router = express.Router();
-/*eslint-enable */
-const { getReport } = require('../../models/portModel');
+
+const router = express.Router(); // eslint-disable-line
+
+const PortModel = require('../../models/portModel');
 
 router.get('/', async (req, res) => {
   const city = req.param('city');
   if (city) {
-    const data = await getReport(city);
+    const report = await PortModel.find({
+      city,
+    })
+    .sort({
+      created: -1,
+    })
+    .limit(1);
+
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(data));
+    res.send(JSON.stringify(report));
   } else {
     debug(`city not found: ${city}`);
-    res.status(500);
+    res.sendStatus(500);
   }
 });
 
