@@ -1,68 +1,119 @@
-/* eslint max-len: [2, 500, 4] */
-const _ = require('lodash');
+const mongoose = require('mongoose');
+const debug = require('debug')('portModel');
 
-const CarModel = require('../carModel');
-const PeopleModel = require('../peopleModel');
 const MongoUtil = require('../../utils/mongoUtil');
 const portsData = require('../../constants/ports.js');
 
+const Schema = mongoose.Schema;
 
-module.exports = class PortModel {
+const dbClient = new MongoUtil();
 
-  constructor() {
-    this.dbClient = new MongoUtil();
+function getCityPorts(ports, city) {
+  return ports.filter(port => city && port.city.toUpperCase() === city.toUpperCase());
+}
+
+async function getReport(city) {
+  const ports = getCityPorts(portsData, city);
+  if (ports && ports.length) {
+    const options = { sort: { created: -1 } };
+    const limit = 1;
+    const promises = ports.map(item =>
+      dbClient.find('report',
+        {
+          garita: item.name,
+        },
+        options,
+        limit
+      )
+    );
+    const report = await Promise.all(promises);
+
+    return report.map(item => item.pop());
   }
+  debug(`invalid city: ${city}, ports: ${ports}`);
+  return [];
+}
 
-  getReport(city) {
-    return new Promise((resolve, reject) => {
-      const ports = this.getCityPorts(portsData, city);
-      if (_.isArray(ports) && ports.length) {
-        const options = { sort: { created: -1 } };
-        const skip = null;
-        const limit = 1;
-        const promises = ports.map((item) => this.dbClient.find('report', { garita: item.name }, options, skip, limit));
-        Promise.all(promises).then(data => resolve(data.map(item => item.pop())));
-      } else {
-        reject();
+function getEntryData(data) {
+  const report = {};
+
+  const types = [
+    ['passenger_vehicle_lanes', 'vehicle'],
+    ['pedestrian_lanes', 'pedestrian'],
+  ];
+
+  const entries = [
+    ['standard_lanes', 'standard'],
+    ['NEXUS_SENTRI_lanes', 'sentri'],
+    ['ready_lanes', 'readyLane'],
+  ];
+
+
+  types.forEach(([keyType, type]) => {
+    //
+    entries.forEach(([key, prop]) => {
+      const entryData = data[keyType][0][key];
+
+      if (entryData) {
+        //
+        if (entryData[0].delay_minutes[0] && entryData[0].lanes_open[0]) {
+          //
+          if (!report[prop]) {
+            report[prop] = {};
+          }
+
+          report[prop][type] = {
+            time: entryData[0].delay_minutes[0],
+            lanes: entryData[0].lanes_open[0],
+          };
+        }
       }
     });
-  }
+  });
 
-  getCityPorts(ports, city) {
-    return ports.filter(port => city && port.city.toUpperCase() === city.toUpperCase());
-  }
+  return report;
+}
 
-  static extractData(data, port) {
-    const response = [];
-    if (this.isDataValid(data)) {
-      const ports = data.border_wait_time.port;
-      ports.map((item) => {
-        if (this.isPortValid(item, port)) {
-          const { carNormal, carSentri, carReady } = CarModel.extractData(item);
-          const { peopleNormal, peopleReady } = PeopleModel.extractData(item);
-          if (carNormal && carSentri && carReady && peopleNormal && peopleReady) {
-            const carReport = CarModel.formatData(carNormal, carSentri, carReady);
-            const peopleReport = PeopleModel.formatData(peopleNormal, peopleReady);
-            response.push({
-              car: carReport,
-              people: peopleReport,
-            });
-          }
-        }
-        return null;
-      });
-    }
-    return response;
-  }
 
-  static isDataValid(data) {
-    if (data && data.border_wait_time && _.isArray(data.border_wait_time.port) && data.border_wait_time.port.length) {
-      return true;
-    }
-    return false;
-  }
+function isPortValid(CBPPort = {}, enablePorts = {}) {
+  const { port_number: portNumber } = CBPPort;
 
-  static isPortValid(data, port) {
-    return data.port_number && data.port_number.indexOf(port.toString()) !== -1;
-  }
-};
+  return portNumber && portNumber.length && enablePorts[portNumber];
+}
+
+function getPorts(CBPData = {}, ports = {}) {
+  const {
+    border_wait_time: {
+      port: CBPPorts = [],
+    } = {},
+  } = CBPData;
+
+  return CBPPorts.filter(item => isPortValid(item, ports));
+}
+
+function extractReport(data, city) {
+  const cityPorts = getPorts(data, city.ports);
+
+  const report = cityPorts.reduce((accumulator, item) => {
+    accumulator[city.ports[item.port_number[0]]] = getEntryData(item);
+    return accumulator;
+  }, {});
+
+  return report;
+}
+
+const PortSchema = new Schema({
+  city: String,
+  report: Object,
+  created: {
+    type: Date,
+    default: new Date(),
+  },
+});
+
+const PortModel = mongoose.model('Port', PortSchema);
+
+module.exports = PortModel;
+
+module.exports.getReport = getReport;
+module.exports.extractReport = extractReport;

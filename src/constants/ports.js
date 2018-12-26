@@ -1,13 +1,10 @@
-module.exports = [{
-  id: '250401',
-  name: 'SAN_YSIDRO',
-  city: 'TIJUANA',
-}, {
-  id: '250601',
-  name: 'OTAY',
-  city: 'TIJUANA',
-}, {
-  id: '250407',
-  name: 'PEDWEST',
-  city: 'TIJUANA',
+const portsByCity = [{
+  name: 'tijuana',
+  ports: {
+    250401: 'sanYsidro',
+    250601: 'otay',
+    250407: 'pedwest',
+  },
 }];
+
+module.exports = portsByCity;

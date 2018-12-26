@@ -6,7 +6,7 @@ const debug = require('debug')('server');
 const reportRoutes = require('./routes/reportRoutes');
 const userRoutes = require('./routes/userRoutes');
 const stubRoutes = require('./routes/stubRoutes');
-const scrapperHelper = require('./main');
+const reportScraper = require('./report-scraper');
 
 const MongoUtil = require('./utils/mongoUtil');
 const config = require('./config');
@@ -31,21 +31,22 @@ app.set('ipaddress', config.get('ipaddress'));
 app.set('port', config.get('port'));
 
 
-const job = new CronJob('00 */15 * * * *', () => {
-  scrapperHelper();
+const job = new CronJob('00 */15 * * * *', async () => {
+  await reportScraper();
 }, null, false, 'America/Los_Angeles');
 
-mongoUtil.openConnection()
-  .then(() => {
-    const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
-      if (err) {
-        debug(err);
-      }
-      const host = server.address().address;
-      const port = server.address().port;
-      debug(`Example app listening at http://${host}:${port}`);
-      job.start();
-    });
-  }, () => {
-    debug('Error :: No DB connection open');
+async function main() {
+  await mongoUtil.openConnection();
+
+  const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
+    if (err) {
+      debug(err);
+    }
+    const host = server.address().address;
+    const port = server.address().port;
+    debug(`Example app listening at http://${host}:${port}`);
+    // job.start();
   });
+}
+
+main();

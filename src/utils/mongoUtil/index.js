@@ -1,86 +1,51 @@
 const { MongoClient } = require('mongodb');
+const debug = require('debug')('mongoUtil');
 
 const config = require('../../config');
-let dbClient;
 
-module.exports = class MongoUtil {
+let dbClient = null;
 
-  openConnection() {
-    return new Promise((resolve, reject) => {
-      if (!dbClient) {
-        MongoClient.connect(config.get('db.url'), (err, db) => {
-          if (err) {
-            reject(err);
-          } else {
-            dbClient = db;
-            resolve();
-          }
-        });
-      } else {
-        resolve()
-      }
-    });
+class MongoUtil {
+
+  async openConnection() {
+    dbClient = await MongoClient.connect(config.get('db.url'));
   }
 
   insertOne(collectionName, data) {
-    return new Promise((resolve, reject) => {
-      if (dbClient) {
-          const collection = dbClient.collection(collectionName);
-          collection.insertOne(data, (err, result) => {
-            if (err) {
-              logUtil.log(`Error insertOne ${err}`);
-              reject({ status: false });
-            } else {
-              resolve(result.result);
-            }
-          });
-      } else {
-        logUtil.log(`Error :: DB must be open`);
-        reject({ status: false });
-      }
-    });
+    if (dbClient) {
+      const collection = dbClient.collection(collectionName);
+      return collection.insertOne(data)
+    } else {
+      debug(`DB must be open`);
+    }
   }
 
   findOne(collectionName, filter, options) {
-    return new Promise((resolve, reject) => {
-      if (dbClient) {
-        const collection = dbClient.collection(collectionName);
-        collection.findOne(filter, options, (err, document) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(document);
-          }
-        });
-      } else {
-        logUtil.log(`Error :: DB must be open`);
-        reject({ status: false });
-      }
-    });
+    if (dbClient) {
+      const collection = dbClient.collection(collectionName);
+      return collection.findOne(filter, options);
+    } else {
+      debug(`Error :: DB must be open`);
+    }
   }
 
   find(collectionName, filter, options, skip, limit) {
-    return new Promise((resolve, reject) => {
-      if (dbClient) {
-        const collection = dbClient.collection(collectionName);
-        collection.find(filter || {}, options || {})
-          .skip(skip || 0)
-          .limit(limit || 0)
-          .toArray((err, documents) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(documents);
-            }
-          });
-      } else {
-        logUtil.log(`Error :: DB must be open`);
-        reject({ status: false });
-      }
-    });
+    if (dbClient) {
+      const collection = dbClient.collection(collectionName);
+      return collection.find(filter || {}, options || {})
+        .skip(skip || 0)
+        .limit(limit || 0)
+        .toArray();
+    } else {
+      debug(`Error :: DB must be open`);
+    }
   }
 
   closeConnection() {
-    dbClient.close();
+    if (dbClient) {
+      dbClient.close();
+    }
   }
 }
+
+module.exports = MongoUtil;
