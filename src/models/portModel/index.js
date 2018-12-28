@@ -51,18 +51,18 @@ function getEntryData(data) {
 
   types.forEach(([keyType, type]) => {
     //
-    entries.forEach(([key, prop]) => {
-      const entryData = data[keyType][0][key];
+    entries.forEach(([keyEntry, entry]) => {
+      const entryData = data[keyType][0][keyEntry];
 
       if (entryData && entryData[0]
         && entryData[0].delay_minutes && entryData[0].delay_minutes[0]
         && entryData[0].lanes_open && entryData[0].lanes_open[0]) {
         //
-        if (!report[prop]) {
-          report[prop] = {};
+        if (!report[type]) {
+          report[type] = {};
         }
 
-        report[prop][type] = {
+        report[type][entry] = {
           time: entryData[0].delay_minutes[0],
           lanes: entryData[0].lanes_open[0],
         };

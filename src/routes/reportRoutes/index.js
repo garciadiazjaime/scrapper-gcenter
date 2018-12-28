@@ -24,7 +24,7 @@ router.get('/', cors(), async (req, res) => {
         })
         .limit(1);
 
-        report = JSON.stringify(data);
+        report = JSON.stringify(data && data[0]);
 
         client.set(cacheKey, report, 'EX', 60);
       } else {

@@ -10,7 +10,7 @@
     "test": "npm run lint",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec --compilers js:babel-core/register --recursive test",
     "dev": "nodemon ./src/server.js",
-    "cron": "node ./src/report-scraper.js",
+    "scraper": "DEBUG=* node ./src/report-scraper.js",
     "lint": "npx eslint .",
     "docker:build": "docker build -t garciadiazjaime/api-gcenter .",
     "docker:push": "docker push garciadiazjaime/api-gcenter",

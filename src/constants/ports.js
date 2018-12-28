@@ -12,12 +12,12 @@ const portsByCity = [{
     250302: 'west',
   },
 }, {
-  name: 'elPaso',
+  name: 'elpaso',
   ports: {
     240201: 'bridgeAmericas',
     240202: 'pasoNorte',
     240204: 'stanton',
-    240203: 'Ysleta',
+    240203: 'ysleta',
   },
 }, {
   name: 'hidalgo',
