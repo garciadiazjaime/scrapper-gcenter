@@ -31,7 +31,7 @@ app.set('port', config.get('port'));
 
 const job = new CronJob('00 */15 * * * *', async () => {
   await reportScraper();
-}, null, false, 'America/Los_Angeles');
+}, null, true, 'America/Los_Angeles');
 
 async function main() {
   await mongoose.connect(config.get('db.url'), { useNewUrlParser: true });
