@@ -106,7 +106,7 @@ const PortSchema = new Schema({
   report: Object,
   created: {
     type: Date,
-    default: new Date(),
+    default: () => new Date(),
   },
 });
 

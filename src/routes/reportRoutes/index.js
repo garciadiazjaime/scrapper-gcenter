@@ -44,21 +44,22 @@ router.get('/last-7-days', cors(), async (req, res) => {
       });
 
     const data = report.reduce((accumulator, item) => {
+      const reportByHour = { ...accumulator };
       const date = new Date(item.created);
       const dayKey = date.getDate();
 
-      if (!accumulator[dayKey]) {
-        accumulator[dayKey] = {};
+      if (!reportByHour[dayKey]) {
+        reportByHour[dayKey] = {};
       }
 
       const hourKey = date.getHours();
-      if (!accumulator[dayKey][hourKey]) {
-        accumulator[dayKey][hourKey] = [];
+      if (!reportByHour[dayKey][hourKey]) {
+        reportByHour[dayKey][hourKey] = {};
       }
 
-      accumulator[dayKey][hourKey].push(item);
+      reportByHour[dayKey][hourKey] = item;
 
-      return accumulator;
+      return reportByHour;
     }, {});
 
     res.setHeader('Content-Type', 'application/json');
