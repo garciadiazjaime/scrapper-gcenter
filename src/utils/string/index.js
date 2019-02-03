@@ -47,3 +47,18 @@ module.exports.timeSince = function timeSince(data) {
   }
   return `1 minuto`;
 }
+
+module.exports.deepGet = function(entry, keyString) {
+  if (!entry || !keyString) {
+    return null
+  }
+
+  const response = keyString.split('.').reduce((item, key) => {
+    if (item && item[key]) {
+      return item[key]
+    }
+    return ''
+  }, entry)
+
+  return response
+}
