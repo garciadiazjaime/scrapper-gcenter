@@ -2,12 +2,22 @@ const mongoose = require('mongoose');
 const debug = require('debug')('portModel');
 
 const MongoUtil = require('../../utils/mongoUtil');
-const { deepGet } = require('../../utils/string');
 const portsData = require('../../constants/ports.js');
 
 const Schema = mongoose.Schema;
 
 const dbClient = new MongoUtil();
+
+const PortSchema = new Schema({
+  city: String,
+  report: Object,
+  created: {
+    type: Date,
+    default: () => new Date(),
+  },
+});
+
+const PortModel = mongoose.model('Port', PortSchema);
 
 function getCityPorts(ports, city) {
   return ports.filter(port => city && port.city.toUpperCase() === city.toUpperCase());
@@ -102,31 +112,26 @@ function extractReport(data, city) {
   return report;
 }
 
-function getVehicleAverageTime(reportItem) {
-  const standard = deepGet(reportItem, 'report.sanYsidro.vehicle.standard.time');
-  const sentri = deepGet(reportItem, 'report.sanYsidro.vehicle.sentri.time');
-  const readyLane = deepGet(reportItem, 'report.sanYsidro.vehicle.readyLane.time');
+async function getLast24hrs(city) {
+  const startDay = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const query = {
+    city,
+    created: {
+      $gte: new Date(startDay.toISOString()),
+    },
+  };
 
-  const sum = parseInt(standard, 10) + parseInt(sentri, 10) + parseInt(readyLane, 10);
-  const average = sum / 3;
-  const toHrs = average / 60;
+  const report = await PortModel
+    .find(query)
+    .sort({
+      created: -1,
+    });
 
-  return toHrs;
+  return report;
 }
-
-const PortSchema = new Schema({
-  city: String,
-  report: Object,
-  created: {
-    type: Date,
-    default: () => new Date(),
-  },
-});
-
-const PortModel = mongoose.model('Port', PortSchema);
 
 module.exports = PortModel;
 
 module.exports.getReport = getReport;
 module.exports.extractReport = extractReport;
-module.exports.getVehicleAverageTime = getVehicleAverageTime;
+module.exports.getLast24hrs = getLast24hrs;

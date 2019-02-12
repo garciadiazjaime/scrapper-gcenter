@@ -5,7 +5,9 @@ const cors = require('cors');
 const router = express.Router(); // eslint-disable-line
 
 const PortModel = require('../../models/portModel');
-const { getVehicleAverageTime } = require('../../models/portModel');
+const { getLast24hrs } = require('../../models/portModel');
+const { deepGet } = require('../../utils/string');
+const { getLast24hrsReport } = require('../../utils/report-helper');
 
 router.get('/', cors(), async (req, res) => {
   const city = req.param('city');
@@ -29,48 +31,11 @@ router.get('/', cors(), async (req, res) => {
 router.get('/last-24hrs', cors(), async (req, res) => {
   const city = req.param('city');
   if (city) {
-    const startDay = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const query = {
-      city,
-      created: {
-        $gte: new Date(startDay.toISOString()),
-      },
-    };
-
-    const report = await PortModel
-      .find(query)
-      .sort({
-        created: -1,
-      });
-
-    const data = report.reduce((accumulator, item) => {
-      const reportByHour = { ...accumulator };
-      const date = new Date(item.created);
-
-      const hourKey = date.getHours();
-      if (!reportByHour[hourKey]) {
-        reportByHour[hourKey] = {
-          time: 0,
-          count: 0,
-        };
-      }
-
-      reportByHour[hourKey].time += getVehicleAverageTime(item);
-      reportByHour[hourKey].count += 1;
-
-      return reportByHour;
-    }, {});
-
-    const response = [...Array(24).keys()].map(hr => {
-      const { time, count } = data[hr] || {};
-      if (count > 0) {
-        return Math.round(time / count * 100) / 100;
-      }
-      return 0;
-    });
+    const report = await getLast24hrs(city);
+    const response = getLast24hrsReport(report, 'sanYsidro');
 
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(response));
+    res.send(response);
   } else {
     debug(`city not found: ${city}`);
     res.sendStatus(500);
