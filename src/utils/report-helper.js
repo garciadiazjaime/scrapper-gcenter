@@ -1,4 +1,6 @@
-const { deepGet } = require('./string');
+const {
+  deepGet
+} = require('./string');
 
 function getLast24hrsReport(report, port) {
   if (!report || !report.length) {
@@ -6,7 +8,7 @@ function getLast24hrsReport(report, port) {
   }
 
   const entries = ['standard', 'sentri', 'readyLane']
-  
+
   const reportByEntryHour = report.reduce((accumulator, item) => {
     const date = new Date(item.created);
 
@@ -21,7 +23,7 @@ function getLast24hrsReport(report, port) {
       const entryReport = accumulator[port].vehicle[entry][hour]
       entryReport.time.push(parseInt(deepGet(item, `report.${port}.vehicle.${entry}.time`)));
     })
-    
+
     return accumulator;
   }, {
     [port]: {
@@ -34,18 +36,26 @@ function getLast24hrsReport(report, port) {
   });
 
   return reportByEntryHour
+}
 
-  // return entries.reduce((accumulator, entry) => {
-  //   const response = [...Array(24).keys()].map(hour => {
-  //     const { time, count } = reportByEntryHour[port].vehicle[entry][hour] || {};
-  //     if (count > 0) {
-  //       return Math.round(time / count * 100) / 100;
-  //     }
-  //     return 0;
-  //   });
-  // })
+function getHistoryReport(report) {
+  let results = "city,port,type,entry,time,lanes,created\n"
+  report.map(item => {
+    if (item.report) {
+      Object.keys(item.report).map(port => {
+        Object.keys(item.report[port]).map(type => {
+          Object.keys(item.report[port][type]).map(entry => {
+            results += `${item.city},${port},${type},${entry},${item.report[port][type][entry].time},${item.report[port][type][entry].lanes},${item.created}\n`
+          })
+        })
+      })
+    }
+  })
+
+  return results
 }
 
 module.exports = {
-  getLast24hrsReport
+  getLast24hrsReport,
+  getHistoryReport
 }

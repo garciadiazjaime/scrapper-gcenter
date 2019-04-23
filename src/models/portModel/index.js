@@ -130,8 +130,24 @@ async function getLast24hrs(city) {
   return report;
 }
 
+async function getHistoryFor(city, limit = 1000) {
+  const query = {
+    city,
+  };
+
+  const report = await PortModel
+    .find(query)
+    .sort({
+      created: -1,
+    })
+    .limit(limit);
+
+  return report;
+}
+
 module.exports = PortModel;
 
 module.exports.getReport = getReport;
 module.exports.extractReport = extractReport;
 module.exports.getLast24hrs = getLast24hrs;
+module.exports.getHistoryFor = getHistoryFor;
