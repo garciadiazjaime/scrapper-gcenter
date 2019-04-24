@@ -130,20 +130,20 @@ async function getLast24hrs(city) {
   return report;
 }
 
-async function getHistoryFor(city, limitAsked = 1000) {
+async function getHistoryFor(city, from) {
+  const startDay = from ? new Date(from) : new Date();
   const query = {
     city,
+    created: {
+      $gte: new Date(startDay.toISOString()),
+    },
   };
-
-  const maxLimit = 10000;
-  const limit = limitAsked > maxLimit ? maxLimit : limitAsked;
 
   const report = await PortModel
     .find(query)
     .sort({
       created: -1,
-    })
-    .limit(limit);
+    });
 
   return report;
 }
