@@ -49,7 +49,8 @@ router.get('/history', async (req, res) => {
     const report = await getHistoryFor(city, limit);
     const response = getHistoryReport(report);
     res.setHeader('Content-Type', 'text/csv');
-    res.send(response);
+    response.forEach(line => res.write(line));
+    res.end();
   } else {
     debug(`city not found: ${city}`);
     res.sendStatus(500);

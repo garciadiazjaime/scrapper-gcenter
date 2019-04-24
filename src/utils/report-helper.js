@@ -39,13 +39,13 @@ function getLast24hrsReport(report, port) {
 }
 
 function getHistoryReport(report) {
-  let results = "city,port,type,entry,time,lanes,created\n"
+  let results = ["city,port,type,entry,time,lanes,created\n"]
   report.map(item => {
     if (item.report) {
       Object.keys(item.report).map(port => {
         Object.keys(item.report[port]).map(type => {
           Object.keys(item.report[port][type]).map(entry => {
-            results += `${item.city},${port},${type},${entry},${item.report[port][type][entry].time},${item.report[port][type][entry].lanes},${item.created}\n`
+            results.push(`${item.city},${port},${type},${entry},${item.report[port][type][entry].time},${item.report[port][type][entry].lanes},${item.created}\n`)
           })
         })
       })
