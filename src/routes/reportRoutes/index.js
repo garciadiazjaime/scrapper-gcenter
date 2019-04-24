@@ -44,7 +44,7 @@ router.get('/last-24hrs', cors(), async (req, res) => {
 router.get('/history', async (req, res) => {
   const city = req.param('city');
   const key = req.param('key');
-  const limit = req.param('limit');
+  const limit = parseInt(req.param('limit'), 10);
   if (city && key === 'mintitmedia') {
     const report = await getHistoryFor(city, limit);
     const response = getHistoryReport(report);

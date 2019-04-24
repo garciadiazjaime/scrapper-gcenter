@@ -130,10 +130,13 @@ async function getLast24hrs(city) {
   return report;
 }
 
-async function getHistoryFor(city, limit = 1000) {
+async function getHistoryFor(city, limitAsked = 1000) {
   const query = {
     city,
   };
+
+  const maxLimit = 10000;
+  const limit = limitAsked > maxLimit ? maxLimit : limitAsked;
 
   const report = await PortModel
     .find(query)

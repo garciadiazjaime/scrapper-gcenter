@@ -14,7 +14,8 @@
     "lint": "npx eslint .",
     "docker:build": "docker build -t garciadiazjaime/api-gcenter .",
     "docker:push": "docker push garciadiazjaime/api-gcenter",
-    "docker:pull": "docker pull garciadiazjaime/api-gcenter"
+    "docker:pull": "docker pull garciadiazjaime/api-gcenter",
+    "deploy": "npm run docker:build && npm run docker:push && echo 'docker pull garciadiazjaime/api-gcenter'"
   },
   "keywords": [],
   "author": "garciadiazjaime@gmail.com",
