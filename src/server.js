@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { CronJob } = require('cron');
 const mongoose = require('mongoose');
 const debug = require('debug')('server');
+const morgan = require('morgan');
 
 const reportRoutes = require('./routes/reportRoutes');
 const stubRoutes = require('./routes/stubRoutes');
@@ -13,6 +14,7 @@ const config = require('./config');
 mongoose.Promise = global.Promise;
 const app = express();
 
+app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
@@ -34,7 +36,7 @@ const job = new CronJob('00 */15 * * * *', async () => {
 }, null, true, 'America/Los_Angeles');
 
 async function main() {
-  await mongoose.connect(config.get('db.url'), { useNewUrlParser: true });
+  await mongoose.connect(config.get('db.url'), { useNewUrlParser: true, useUnifiedTopology: true });
 
   const server = app.listen(app.get('port'), app.get('ipaddress'), (err) => {
     if (err) {

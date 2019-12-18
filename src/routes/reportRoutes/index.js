@@ -28,7 +28,7 @@ router.get('/', cors(), async (req, res) => {
 });
 
 router.get('/last-24hrs', cors(), async (req, res) => {
-  const city = req.param('city');
+  const { city } = req.query;
   if (city) {
     const report = await getLast24hrs(city);
     const response = getLast24hrsReport(report, 'sanYsidro');
