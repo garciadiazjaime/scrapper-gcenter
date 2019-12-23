@@ -7,6 +7,7 @@ const router = express.Router(); // eslint-disable-line
 const PortModel = require('../../models/portModel');
 const { getLast24hrs, getHistoryFor } = require('../../models/portModel');
 const { getLast24hrsReport, getHistoryReport } = require('../../utils/report-helper');
+const { getLast24hrsImage } = require('../../utils/image-generator');
 
 router.get('/', cors(), async (req, res) => {
   const city = req.param('city');
@@ -39,6 +40,18 @@ router.get('/last-24hrs', cors(), async (req, res) => {
     debug(`city not found: ${city}`);
     res.sendStatus(500);
   }
+});
+
+router.get('/last-24hrs-image', async (req, res) => {
+  const { city } = req.query;
+  if (!city) {
+    return res.sendStatus(500);
+  }
+
+  const response = await getLast24hrsImage(city);
+
+  res.setHeader('Content-Type', 'image/svg+xml');
+  return res.send(response);
 });
 
 router.get('/history', async (req, res) => {

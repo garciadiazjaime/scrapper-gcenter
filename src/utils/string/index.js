@@ -1,4 +1,3 @@
-
 function printMinutes(data) {
   if (data < 10) {
     return `0${data}`;
@@ -6,7 +5,7 @@ function printMinutes(data) {
   return data;
 }
 
-module.exports.minsToHrs = function minsToHrs(data) {
+function minsToHrs(data) {
   if (data) {
     const hours = Math.floor(data / 60);
     const minutes = data % 60;
@@ -15,14 +14,22 @@ module.exports.minsToHrs = function minsToHrs(data) {
   return data;
 }
 
-module.exports.toTitleCase = function toTitleCase(data) {
+function printAMFMFormat(hour) {
+  if (hour < 13) {
+    return `${hour} AM`
+  }
+
+  return `${hour - 12} PM`
+}
+
+function toTitleCase(data) {
   const response = data.replace(/_/g, ' ');
   return response.replace(/\w\S*/g, (txt) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 }
 
-module.exports.timeSince = function timeSince(data) {
+function timeSince(data) {
   const seconds = Math.floor((new Date() - new Date(data)) / 1000);
   let interval = Math.floor(seconds / 31536000);
 
@@ -48,7 +55,7 @@ module.exports.timeSince = function timeSince(data) {
   return `1 minuto`;
 }
 
-module.exports.deepGet = function(entry, keyString) {
+function deepGet(entry, keyString) {
   if (!entry || !keyString) {
     return null
   }
@@ -61,4 +68,13 @@ module.exports.deepGet = function(entry, keyString) {
   }, entry)
 
   return response
+}
+
+module.exports = {
+  printMinutes,
+  minsToHrs,
+  toTitleCase,
+  timeSince,
+  deepGet,
+  printAMFMFormat
 }
