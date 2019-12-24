@@ -1,3 +1,5 @@
+const moment = require('moment-timezone');
+
 const {
   deepGet
 } = require('./string');
@@ -6,34 +8,26 @@ function getLast24hrsReport(report, port) {
   if (!report || !report.length) {
     return []
   }
-
-  const entries = ['standard', 'sentri', 'readyLane']
+  const hourTaken = {}
 
   const reportByEntryHour = report.reduce((accumulator, item) => {
-    const date = new Date(item.created);
+    const hour = new moment(item.created).tz("America/Los_Angeles").format("H")
 
-    const hour = date.getHours();
-
-    entries.forEach(entry => {
-      if (!accumulator[port].vehicle[entry][hour]) {
-        accumulator[port].vehicle[entry][hour] = {
-          time: [],
-        };
-      }
-      const entryReport = accumulator[port].vehicle[entry][hour]
-      entryReport.time.push(parseInt(deepGet(item, `report.${port}.vehicle.${entry}.time`)));
-    })
-
-    return accumulator;
-  }, {
-    [port]: {
-      vehicle: {
-        standard: {},
-        sentri: {},
-        readyLane: {}
-      }
+    if (hourTaken[hour]) {
+      return accumulator
     }
-  });
+    const time = deepGet(item, `report.${port}.vehicle.standard.time`)
+    if (time) {
+      accumulator.push({
+        hour,
+        time
+      })
+
+      hourTaken[hour] = true
+    }
+    
+    return accumulator;
+  }, []);
 
   return reportByEntryHour
 }

@@ -5,7 +5,7 @@
   "private": true,
   "main": "node --use_strict ./src/server.js",
   "scripts": {
-    "start": "TZ=America/Los_Angeles node --use_strict ./src/server.js",
+    "start": "node --use_strict ./src/server.js",
     "unittest": "./node_modules/.bin/mocha --compilers js:babel-core/register --recursive test",
     "test": "npm run lint",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec --compilers js:babel-core/register --recursive test",
@@ -33,6 +33,7 @@
     "i": "^0.3.6",
     "lodash": "^4.17.15",
     "moment": "^2.14.1",
+    "moment-timezone": "^0.5.27",
     "mongodb": "^3.4.0",
     "mongoose": "^5.8.1",
     "morgan": "^1.9.1",

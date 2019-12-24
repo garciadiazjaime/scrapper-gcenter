@@ -1,11 +1,13 @@
 const { axisBottom, axisLeft } = require('d3-axis')
+const moment = require('moment-timezone');
 
 const { minsToHrs, printAMFMFormat } = require('../string')
 const { getLast24hrs } = require('../../models/portModel');
 const { getLast24hrsReport } = require('../report-helper');
 
 function getYValues() {
-  const currentHour = new Date().getHours()
+  const currentHour = new moment().tz("America/Los_Angeles").format("H")
+
   const yValues = []
 
   for(let i = 1; i < 25; i++) {
@@ -21,11 +23,7 @@ function getYValues() {
 
 async function getGraphData(city) {
   const report = await getLast24hrs(city);
-  const { sanYsidro: { vehicle: { standard }}} = getLast24hrsReport(report, 'sanYsidro');
-  const data = Object.keys(standard).map(hour => ({
-    hour: parseInt(hour),
-    time: standard[hour].time[0]
-  }))
+  const data = getLast24hrsReport(report, 'sanYsidro');
 
   return data
 }
