@@ -5,7 +5,7 @@
   "private": true,
   "main": "node --use_strict ./src/server.js",
   "scripts": {
-    "start": "node --use_strict ./src/server.js",
+    "start": "TZ=America/Los_Angeles node --use_strict ./src/server.js",
     "unittest": "./node_modules/.bin/mocha --compilers js:babel-core/register --recursive test",
     "test": "npm run lint",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec --compilers js:babel-core/register --recursive test",
