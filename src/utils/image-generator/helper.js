@@ -51,7 +51,7 @@ function setYAxis(chart, y, padding) {
 
   chart.append('g')
     .call(yAxis)
-    .attr('transform', `translate(${padding}, ${padding * 1.5})`)
+    .attr('transform', `translate(${padding}, ${padding + 45})`)
     .attr('font-size', '14px')
 }
 
@@ -93,13 +93,13 @@ function setBars(chart, data, padding, x, y) {
     .style('fill', (d, i) => i % 2 === 0 ? 'steelblue' : 'cadetblue')
     .attr('x', padding)
     .attr('width', d => x(d.time))
-    .attr('y', d => y(d.hour + 1) - 4)
+    .attr('y', d => y(d.hour) + padding * 1.5)
     .attr('height', barHeight - 2)
 
   barGroups.append('text')
     .attr('fill', 'black')
-    .attr('x', data => x(data.time) + padding + 20)
-    .attr('y', data => y(data.hour + 1) + barHeight / 2)
+    .attr('x', data => x(data.time) + padding + 25)
+    .attr('y', data => y(data.hour + 1) + padding + 10)
     .attr('text-anchor', 'middle')
     .text(data => `${minsToHrs(data.time)}`)
 }
