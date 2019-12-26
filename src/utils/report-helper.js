@@ -19,8 +19,8 @@ function getLast24hrsReport(report, port) {
     const time = deepGet(item, `report.${port}.vehicle.standard.time`)
     if (time) {
       accumulator.push({
-        hour,
-        time
+        hour: parseInt(hour),
+        time: parseInt(time)
       })
 
       hourTaken[hour] = true

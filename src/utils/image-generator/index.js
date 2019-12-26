@@ -12,7 +12,11 @@ const {
 
 
 async function getLast24hrsImage(city) {
-  const data = await getGraphData(city)
+  const dataUnformmated = await getGraphData(city)
+  const data = dataUnformmated.map(item => ({
+    hour: parseInt(item.hour),
+    time: parseInt(item.time)
+  }))
   
   const padding = 50
   const width = 320
