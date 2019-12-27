@@ -34,14 +34,12 @@ async function getLast24hrsImage(city) {
   const y = scaleLinear()
     .domain([0, hoursInADay])
     .range([0, height - 2 * padding])
-  setYAxis(chart, y, padding)
+  setYAxis(chart, y, padding, 10)
 
   const x = scaleLinear()
     .domain([0, threeHoursInMins]) // 3hrs
     .range([0, width - padding - 20])
-  setXAxis(chart, x, padding)
-
-  setHeader(chart)
+  setXAxis(chart, x, padding, 10)
 
   setBars(chart, data, padding, x, y)
 

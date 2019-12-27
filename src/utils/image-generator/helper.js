@@ -27,7 +27,7 @@ async function getGraphData(city) {
   return data
 }
 
-function setXAxis(chart, x, padding) {
+function setXAxis(chart, x, paddingX, paddingY) {
   const xValues = [30, 60, 90, 120, 150, 180]
 
   const xAxis = axisBottom(x)
@@ -36,7 +36,7 @@ function setXAxis(chart, x, padding) {
   
   chart.append('g')
     .call(xAxis)
-    .attr('transform', `translate(${padding}, ${padding})`)
+    .attr('transform', `translate(${paddingX}, ${paddingY})`)
     .attr('font-size', '16px')
 }
 
@@ -48,7 +48,7 @@ function setYAxis(chart, y, padding) {
 
   chart.append('g')
     .call(yAxis)
-    .attr('transform', `translate(${padding}, ${padding + 45})`)
+    .attr('transform', `translate(${padding}, ${padding})`)
     .attr('font-size', '14px')
 }
 
@@ -58,25 +58,6 @@ function setBackground(chart) {
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('fill', 'lightyellow')
-}
-
-function setHeader(chart) {
-  chart.append('g')
-    .append('text')
-    .attr('transform', `translate(0, 0)`)
-    .attr('dy', '1em')
-    .style('text-anchor', 'center')
-    .style('font-size', '18px')
-    .text('Espera Promedio de las Últimas 24 horas')
-
-  chart.append('g')
-    .append('text')
-    .attr('transform', `translate(0, 20)`)
-    .attr('dy', '1em')
-    .style('text-anchor', 'center')
-    .style('font-size', '16px')
-    .style('fill', '#333')
-    .text('Garita de San Ysidro | Carro - Normal')
 }
 
 function setBars(chart, data, padding, x, y) {
@@ -90,13 +71,13 @@ function setBars(chart, data, padding, x, y) {
     .style('fill', (d, i) => i % 2 === 0 ? 'steelblue' : 'cadetblue')
     .attr('x', padding)
     .attr('width', d => x(d.time))
-    .attr('y', (data, index) => y(index) + padding * 1.5)
+    .attr('y', (data, index) => y(index) + padding)
     .attr('height', barHeight - 2)
 
   barGroups.append('text')
     .attr('fill', 'black')
     .attr('x', data => x(data.time) + padding + 25)
-    .attr('y', (data, index) => y(index) + padding * 2)
+    .attr('y', (data, index) => y(index) + padding * 1.5)
     .attr('text-anchor', 'middle')
     .text(data => `${minsToHrs(data.time)}`)
 }
@@ -106,6 +87,5 @@ module.exports = {
   setXAxis,
   setYAxis,
   setBackground,
-  setHeader,
   setBars
 }
