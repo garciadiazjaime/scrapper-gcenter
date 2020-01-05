@@ -78,6 +78,14 @@ const config = convict({
       env: 'TWITTER_MAX_TWEETS',
     },
   },
+  facebook: {
+    token: {
+      doc: '',
+      format: String,
+      default: '',
+      env: 'FACEBOOK_TOKEN',
+    },
+  },
 });
 
 // Perform validation

@@ -1,5 +1,8 @@
+const mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const debug = require('debug')('mongoUtil');
+
+mongoose.Promise = global.Promise;
 
 const config = require('../../config');
 
@@ -48,4 +51,14 @@ class MongoUtil {
   }
 }
 
+function openDB() {
+  return mongoose.connect(config.get('db.url'), { useNewUrlParser: true, useUnifiedTopology: true });
+}
+
+function closeDB() {
+  return mongoose.connection.close()
+}
+
 module.exports = MongoUtil;
+module.exports.openDB = openDB
+module.exports.closeDB = closeDB
