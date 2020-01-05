@@ -4,3 +4,4 @@ npm-debug.log
 .ruby-version
 tmp/
 build
+data/facebook_messages.csv
