@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const debug = require('debug')('scraper');
+const debug = require('debug')('app:scraper');
 
 const RequestUtil = require('./utils/requestUtil');
 const XmlUtil = require('./utils/xmlUtil');
