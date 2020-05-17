@@ -8,17 +8,19 @@ const PortModel = require('../../models/portModel');
 const { getLast24hrs, getHistoryFor } = require('../../models/portModel');
 const { getLast24hrsReport, getHistoryReport } = require('../../utils/report-helper');
 const { getLast24hrsImage } = require('../../utils/image-generator');
+const { getOrElse } = require('../../utils/cache')
 
 router.get('/', cors(), async (req, res) => {
   const city = req.param('city');
   if (city) {
-    const report = await PortModel.find({
-      city,
-    })
-    .sort({
-      created: -1,
-    })
-    .limit(1);
+    const report = await getOrElse(city, () => PortModel.find({
+        city,
+      })
+      .sort({
+        created: -1,
+      })
+      .limit(1)
+    )
 
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(report && report[0]));
