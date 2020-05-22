@@ -9,6 +9,7 @@ const { getLast24hrs, getHistoryFor } = require('../../models/portModel');
 const { getLast24hrsReport, getHistoryReport } = require('../../utils/report-helper');
 const { getLast24hrsImage } = require('../../utils/image-generator');
 const { getOrElse } = require('../../utils/cache')
+const { getLast24hrsSummary } = require('../../utils/port')
 
 router.get('/', cors(), async (req, res) => {
   const city = req.param('city');
@@ -38,6 +39,19 @@ router.get('/last-24hrs', cors(), async (req, res) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(response);
+  } else {
+    debug(`city not found: ${city}`);
+    res.sendStatus(500);
+  }
+});
+
+router.get('/last-24hrs/summary', async (req, res) => {
+  const { city } = req.query;
+  if (city) {
+    const report = await getLast24hrsSummary(city);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(report);
   } else {
     debug(`city not found: ${city}`);
     res.sendStatus(500);
