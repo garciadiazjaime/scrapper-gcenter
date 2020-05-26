@@ -45,6 +45,16 @@ async function getReport(city) {
   return [];
 }
 
+function getIntValue(value) {
+  try {
+    return parseInt(value)
+  }
+  catch (error) {
+    debug(error)
+    return 0
+  }
+}
+
 function getEntryData(data) {
   const report = {};
 
@@ -74,8 +84,8 @@ function getEntryData(data) {
         }
 
         report[type][entry] = {
-          time: entryData[0].delay_minutes[0],
-          lanes: entryData[0].lanes_open[0],
+          time: getIntValue(entryData[0].delay_minutes[0]),
+          lanes: getIntValue(entryData[0].lanes_open[0]),
         };
       }
     });
