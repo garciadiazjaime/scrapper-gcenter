@@ -12,7 +12,7 @@ function getLast24hrsSummaryHelper(query, key) {
       }
     },
     {
-      $sort: { [`report.${key}`]: -1 } 
+      $sort: { 'time': -1 }
     },
     {
       $limit: 1

@@ -6,3 +6,5 @@ tmp/
 build
 data/facebook_messages.csv
 newrelic_agent.log
+secrets.txt
+data
