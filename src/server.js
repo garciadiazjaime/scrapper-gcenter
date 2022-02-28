@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { CronJob } = require('cron');
 const mongoose = require('mongoose');
-const debug = require('debug')('server');
+const debug = require('debug')('app:server');
 const morgan = require('morgan');
 
 const reportRoutes = require('./routes/reportRoutes');
@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({
 
 app.use('/report', reportRoutes);
 app.use('/stub', stubRoutes);
+app.use(express.static('public'));
 
 app.get('*', (req, res) => {
   res.send('*');
@@ -48,7 +49,9 @@ async function main() {
     const host = server.address().address;
     const port = server.address().port;
     debug(`Example app listening at http://${host}:${port}`);
-    job.start();
+    if(config.get('env') === 'production') {
+      job.start();
+    }
   });
 }
 

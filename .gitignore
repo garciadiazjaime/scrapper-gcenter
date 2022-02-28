@@ -8,3 +8,4 @@ data/facebook_messages.csv
 newrelic_agent.log
 secrets.txt
 data
+public

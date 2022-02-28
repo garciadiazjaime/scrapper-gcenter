@@ -1,6 +1,7 @@
 const express = require('express');
 const debug = require('debug')('reportRoutes');
 const cors = require('cors');
+const fs = require('fs')
 
 const router = express.Router(); // eslint-disable-line
 
@@ -82,6 +83,19 @@ router.get('/history', async (req, res) => {
     res.end();
   } else {
     debug(`city not found: ${city}`);
+    res.sendStatus(500);
+  }
+});
+
+router.post('/static', async (req, res) => {
+  const { city } = req.query;
+  const payload = req.body;
+
+  if (city && Object.keys(payload).length) {
+    fs.writeFileSync(`./public/${city}.json`, JSON.stringify(payload))
+    res.sendStatus(200);
+  } else {
+    debug('static route empty params');
     res.sendStatus(500);
   }
 });

@@ -1,34 +1,27 @@
-GaritaCenter Scrapper
-----
+# Garita Center
 
-[![Build Status](https://travis-ci.org/garciadiazjaime/scrapper-garitacenter.svg)](https://travis-ci.org/garciadiazjaime/scrapper-garitacenter)
+[Reporte de Garitas Tijuana](https://www.garitacenter.com/)
 
-Run project:
-----
-a) let's install all packages:
+## Feedmetj
 
-`npm install`
+[Restaurantes en Tijuana](https://www.feedmetj.com/)
 
-b) let's run dev server
+### Noticias México
 
-`npm run dev`
+[Últimas Noticias de México](https://www.noticiasmexico.org/)
 
-By default server will run on http://127.0.0.1:3030/
+### Comprar Casa Tijuana
 
-Code to increase jslint max line length limit
-/* eslint max-len: [2, 500, 4] */
+[Casas en Venta en Tijuana](https://www.comprarcasatijuana.com/)
 
-Check the current number of connections to MongoDb
-db.serverStatus().connections
+### El Valle de Guadalupe
 
-Docker commands
-----
+[La Ruta del Vino Ensenada](http://www.larutadelvinoensenada.com/)
 
-docker build -t garciadiazjaime/api-gcenter .
-docker run -d -p 49182:3082 garciadiazjaime/api-gcenter
-docker push garciadiazjaime/api-gcenter
-docker pull garciadiazjaime/api-gcenter
+### Playami
 
-Site
-----
-[Reporte de Garitas](https://www.garitacenter.com/)
+[Restaurantes en Playas de Tijuana](http://www.playami.com/)
+
+### Mint IT Media
+
+[Desarrollo Web en Tijuana](https://www.mintitmedia.com/)
