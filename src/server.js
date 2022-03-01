@@ -2,6 +2,7 @@ if (process.env.NODE_ENV === 'production') {
   require('newrelic');
 }
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const { CronJob } = require('cron');
 const mongoose = require('mongoose');
@@ -17,6 +18,7 @@ const config = require('./config');
 mongoose.Promise = global.Promise;
 const app = express();
 
+app.use(cors())
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
