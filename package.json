@@ -21,7 +21,7 @@
   "author": "garciadiazjaime@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.20.1",
     "convict": "^4.4.1",
     "cors": "^2.8.5",
     "cron": "^1.3.0",
@@ -29,7 +29,7 @@
     "d3-node": "^2.2.1",
     "d3-scale": "^3.2.1",
     "d3node-barchart": "^0.1.1",
-    "express": "^4.14.0",
+    "express": "^4.18.2",
     "fb": "^2.0.0",
     "i": "^0.3.6",
     "json2csv": "^4.5.4",
