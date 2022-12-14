@@ -88,11 +88,9 @@ router.get('/history', async (req, res) => {
 });
 
 router.post('/static', async (req, res) => {
-  const { city } = req.query;
   const payload = req.body;
-
-  if (city && Object.keys(payload).length) {
-    fs.writeFileSync(`./public/${city}.json`, JSON.stringify(payload))
+  if (Array.isArray(payload) && payload.length) {
+    fs.writeFileSync(`./public/gc_report.json`, JSON.stringify(payload))
     res.sendStatus(200);
   } else {
     debug('static route empty params');
